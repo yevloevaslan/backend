@@ -1,0 +1,35 @@
+{
+  "name": "translater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MustafaAushev/translater.git"
+  },
+  "author": "MusAushev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MustafaAushev/translater/issues"
+  },
+  "homepage": "https://github.com/MustafaAushev/translater#readme",
+  "dependencies": {
+    "@types/jest": "^26.0.20",
+    "boom": "^7.3.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jest": "^26.6.3",
+    "mongoose": "^5.11.17",
+    "typescript": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.31",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "eslint": "^7.20.0"
+  }
+}
