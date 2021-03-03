@@ -12,7 +12,6 @@ if (NODE_ENV !== 'production') {
         next();
     });
 }
-
 app.use(cors({
     origin: true,
     methods: 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
