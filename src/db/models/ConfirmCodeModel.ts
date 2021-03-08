@@ -1,12 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
-
-export interface IConfirmCode{
-    _id: string,
-    phone: string,
-    code: string,
-    updatedAt: string,
-}
-
+import {IConfirmCode} from '../../entities';
 export interface IConfirmCodeModel extends IConfirmCode, Document {
     _id: string,
     phone: string,
@@ -18,6 +11,7 @@ const ConfirmCode = new Schema({
     phone: {
         type: String,
         required: true,
+        unique: true,
     },
     code: {
         type: String,

@@ -1,16 +1,26 @@
-import { IConfirmCode } from '../db/models/ConfirmCodeModel';
-import {User, ConfirmCode} from './classes/index';
+import { IConfirmCode, IUser } from '../entities';
+import {User, ConfirmCode, Users} from './classes/index';
 import TokenController from '../controllers/TokenController';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import UserClass from './classes/UserClass';
-import { IUser } from '../entities/User.entity';
-
+import { UserModel } from '../db/models';
 interface confirmLoginResult {
     data: {
         token: string,
         user: IUser,
     },
+}
+
+interface getUserListResult {
+    data: Array<IUser>,
+    meta: {
+        count: number,
+    },
+}
+
+interface getUserByIdResult {
+    data: IUser,
 }
 
 const loginInputSchema = Joi.object({
@@ -49,5 +59,25 @@ export default class UserController {
     static async getUser(query: {_id: string}): Promise<UserClass> {
         const user = await User(query);
         return user;
+    }
+
+    static async getUserList(): Promise<getUserListResult> {
+        const [users, count] = await Promise.all([
+            Users(),
+            UserModel.count(),
+        ]);
+        return {
+            data: users.map(user => user.data),
+            meta: {
+                count,
+            },
+        };
+    }
+
+    static async getUserById(_id: string): Promise<getUserByIdResult> {
+        const user = await UserController.getUser({_id});
+        return {
+            data: user.data,
+        };
     }
 }

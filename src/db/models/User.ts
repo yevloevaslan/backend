@@ -1,7 +1,7 @@
 import {Schema, model, Document} from 'mongoose';
 import {IUser} from '../../entities/User.entity';
 
-interface IUserModel extends IUser, Document {
+export interface IUserModel extends IUser, Document {
     _id: string,
     phone: string,
     createdAt: string,
@@ -12,6 +12,7 @@ const User = new Schema({
     phone: {
         type: String,
         required: true,
+        unique: true,
     },
 }, {
     timestamps: true,

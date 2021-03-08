@@ -24,10 +24,27 @@ router.post('/confirm', async (req, res, next) => {
 });
 
 router.get('/info', checkTokenMiddleware, (req: UserRequestInterface, res) => {
-    console.log(req.user);
     res.send({
         data: req.user.data,
     });
+});
+
+router.get('/', async (_req, res, next) => {
+    try {
+        const result = await UserController.getUserList();
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:id', async (req, res, next) => {
+    try {
+        const result = await UserController.getUserById(req.params.id);
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
 });
 
 export default router;

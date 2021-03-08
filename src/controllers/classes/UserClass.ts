@@ -1,26 +1,26 @@
-import { notFound } from 'boom';
-import { UserModel } from '../../db/models/User';
+import { IUserModel } from '../../db/models/User';
 import { IUser } from '../../entities/User.entity';
 
 export default class UserClass {
-    private inputData: {phone?: string, _id?: string|undefined};
-    private user: IUser;
+    // private inputData: {phone?: string, _id?: string|undefined};
+    private user: IUserModel;
 
-    constructor(data: {phone?: string, _id?: string}) {
-        this.inputData = {};
-        if (data.phone) this.inputData.phone = data.phone; 
-        this.inputData._id = data._id;  
+    constructor(userData: IUserModel) {
+        this.user = userData;
     }
 
-    async setup(): Promise<void> {
-        this.user = await UserModel.findOne(this.inputData);
-        if (!this.user && this.inputData.phone) {
-            this.user = await new UserModel({
-                phone: this.inputData.phone,
-            }).save();
-        } else if (!this.user) throw notFound('User not found');
-        return;
-    }
+    // async setup(): Promise<void> {
+    //     const query: {_id?: string, phone?: string} = {};
+    //     if (this.inputData._id) query._id = this.inputData._id;
+    //     if (this.inputData.phone) query.phone = this.inputData.phone;
+    //     this.user = await UserModel.findOne(query);
+    //     if (!this.user && this.inputData.phone) {
+    //         this.user = await new UserModel({
+    //             phone: this.inputData.phone,
+    //         }).save();
+    //     } else if (!this.user) throw notFound('User not found');
+    //     return;
+    // }
 
     get _id(): string {
         return this.user._id;
