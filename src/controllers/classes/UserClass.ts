@@ -1,24 +1,36 @@
+import { notFound } from 'boom';
 import { IUser, UserModel } from '../../db/models/User';
 
 export default class UserClass {
-    private phone;
+    private inputData: {phone?: string, _id?: string|undefined};
     private user: IUser;
-    constructor(data: {phone: string}) {
-        this.phone = data.phone;   
+
+    constructor(data: {phone?: string, _id?: string}) {
+        this.inputData = {};
+        if (data.phone) this.inputData.phone = data.phone; 
+        this.inputData._id = data._id;  
     }
 
-    async setup(): Promise<boolean> {
-        this.user = await UserModel.findOne({phone: this.phone});
-        return !!this.user;
+    async setup(): Promise<void> {
+        this.user = await UserModel.findOne(this.inputData);
+        if (!this.user && this.inputData.phone) {
+            this.user = await new UserModel({
+                phone: this.inputData.phone,
+            }).save();
+        } else if (!this.user) throw notFound('User not found');
+        return;
     }
 
-    async createUser(): Promise<void> {
-        this.user = await new UserModel({
-            phone: this.phone,
-        }).save();
+    get _id(): string {
+        return this.user._id;
     }
 
-    getUser(): IUser {
-        return this.user;
+    get data(): IUser {
+        return {
+            _id: this.user._id,
+            createdAt: this.user.createdAt,
+            phone: this.user.phone,
+            updatedAt: this.user.updatedAt,
+        };
     }
 }

@@ -1,4 +1,4 @@
-const {MONGO_DB_NAME, MONGO_DB_PORT, MONGO_DB_URI, PORT} = process.env;
+const {MONGO_DB_NAME, MONGO_DB_PORT, MONGO_DB_URI, PORT, JWT_KEY} = process.env;
 
 export default {
     mongoDB: {
@@ -7,4 +7,5 @@ export default {
         dbName: MONGO_DB_NAME || 'translate',
     },
     port: PORT || 8888,
+    jwtKey: JWT_KEY || 'translate',
 };

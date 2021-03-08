@@ -1,0 +1,45 @@
+swagger: '2.0'
+info:
+  title: translator
+  version: 1.0.0
+host: 'test.ru'
+schemes:
+  - https
+basePath: /api
+produces:
+  - application/json
+paths:
+  /users/login:
+    post:
+      tags:
+      - User
+      summary: Send code for register/login
+      parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            phone:
+              type: string
+      responses:
+        200:
+          description: ok
+  /users/confirm:
+    post:
+      tags:
+      - User
+      summary: Confirm code for authorization
+      parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            _id:
+              type: string
+            code:
+              type: string
+      responses:
+        200:
+          description: ok

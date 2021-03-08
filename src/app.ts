@@ -5,6 +5,8 @@ const app = express();
 const {NODE_ENV} = process.env;
 import routes from './routes';
 import cookieParser from 'cookie-parser';
+import db from './db';
+db();
 
 if (NODE_ENV !== 'production') {
     app.use((req: Request, _res: Response, next: NextFunction) => {
