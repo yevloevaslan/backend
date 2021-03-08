@@ -6,6 +6,7 @@ export interface IAdminModel extends Document, IAdmin {
     login: string,
     createdAt: string,
     updatedAt: string,
+    password: string,
 }
 
 const Admin = new Schema({

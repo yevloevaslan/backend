@@ -11,6 +11,10 @@ export default class AdminClass {
         return this.admin._id;
     }
 
+    get password(): string {
+        return this.admin.password;
+    }
+
     get data(): IAdmin {
         return {
             _id: this.admin._id,

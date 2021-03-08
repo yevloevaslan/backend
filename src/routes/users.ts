@@ -23,13 +23,13 @@ router.post('/confirm', async (req, res, next) => {
     }
 });
 
-router.get('/info', checkTokenMiddleware, (req: UserRequestInterface, res) => {
+router.get('/info', checkTokenMiddleware('user'), (req: UserRequestInterface, res) => {
     res.send({
         data: req.user.data,
     });
 });
 
-router.get('/', async (_req, res, next) => {
+router.get('/', checkTokenMiddleware('admin'), async (_req, res, next) => {
     try {
         const result = await UserController.getUserList();
         res.send(result);
@@ -38,7 +38,7 @@ router.get('/', async (_req, res, next) => {
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', checkTokenMiddleware('admin'), async (req, res, next) => {
     try {
         const result = await UserController.getUserById(req.params.id);
         res.send(result);

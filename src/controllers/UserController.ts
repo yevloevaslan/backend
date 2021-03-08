@@ -64,7 +64,7 @@ export default class UserController {
     static async getUserList(): Promise<getUserListResult> {
         const [users, count] = await Promise.all([
             Users(),
-            UserModel.count(),
+            UserModel.countDocuments(),
         ]);
         return {
             data: users.map(user => user.data),
