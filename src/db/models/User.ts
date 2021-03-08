@@ -1,11 +1,5 @@
 import {Schema, model, Document} from 'mongoose';
-
-export interface IUser {
-    _id: string,
-    phone: string,
-    createdAt: string,
-    updatedAt: string,
-}
+import {IUser} from '../../entities/User.entity';
 
 interface IUserModel extends IUser, Document {
     _id: string,

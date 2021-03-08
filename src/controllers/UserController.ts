@@ -1,9 +1,10 @@
 import { IConfirmCode } from '../db/models/ConfirmCodeModel';
-import { IUser } from '../db/models/User';
 import {User, ConfirmCode} from './classes/index';
 import TokenController from '../controllers/TokenController';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
+import UserClass from './classes/UserClass';
+import { IUser } from '../entities/User.entity';
 
 interface confirmLoginResult {
     data: {
@@ -45,8 +46,8 @@ export default class UserController {
         };
     }
 
-    static async getUser(query: {_id: string}): Promise<IUser> {
+    static async getUser(query: {_id: string}): Promise<UserClass> {
         const user = await User(query);
-        return user.data;
+        return user;
     }
 }

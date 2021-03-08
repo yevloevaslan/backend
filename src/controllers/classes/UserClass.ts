@@ -1,5 +1,6 @@
 import { notFound } from 'boom';
-import { IUser, UserModel } from '../../db/models/User';
+import { UserModel } from '../../db/models/User';
+import { IUser } from '../../entities/User.entity';
 
 export default class UserClass {
     private inputData: {phone?: string, _id?: string|undefined};
