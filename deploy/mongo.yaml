@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-db
+spec:
+  serviceName: mongo
+  selector:
+    matchLabels:
+      app: mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo
+        ports:
+          - containerPort: 27017
+        volumeMounts:
+          - name: mongo-persistent-storage
+            mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage
+          hostPath:
+            path: /opt/translator/mongo
+            type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-service
+spec:
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+    name: tcp-mongo
+
+        

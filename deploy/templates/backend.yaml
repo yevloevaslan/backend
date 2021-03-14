@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  replicas: 1
+  serviceName: "translator-backend-service"
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: "{{ .Values.app.backend.image }}:{{ .Values.app.backend.tag }}"
+          imagePullPolicy: Always
+          env:
+            - name: MONGO_DB_NAME
+              value: "translator"
+            - name: MONGO_DB_PORT
+              value: "27017"
+            - name: MONGO_DB_URI
+              value: "mongo-service"
+            - name: PORT
+              value: "8888"
+            - name: JWT_KEY
+              valueFrom:
+                  secretKeyRef:
+                    name: backend-secrets
+                    key: jwtKey
+          ports:
+            - containerPort: 8888
+      imagePullSecrets:
+        - name: docker-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: translator-backend-service
+  labels:
+    name: translator-backend-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: backend
+      port: 80
+      protocol: TCP
+      targetPort: 8888
+  selector:
+    app: backend
