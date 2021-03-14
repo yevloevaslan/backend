@@ -2,9 +2,9 @@ swagger: '2.0'
 info:
   title: translator
   version: 1.0.0
-host: 'test.ru'
+host: '164.90.247.206'
 schemes:
-  - https
+  - http
 basePath: /api
 produces:
   - application/json
