@@ -1,12 +1,12 @@
 import {Router} from 'express';
 const router = Router();
-import UserController from '../controllers/UserController';
+import {login, confirmLogin} from '../controllers/UserController';
 import { UserRequestInterface } from './interfaces/UserRequest.interface';
 import {checkTokenMiddleware} from './middlewares/auth.middleware';
 
 router.post('/login', async (req, res, next) => {
     try {
-        const result = await UserController.login(req.body);
+        const result = await login(req.body);
         res.send(result);
     } catch (err) {
         next(err);
@@ -15,7 +15,7 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/confirm', async (req, res, next) => {
     try {
-        const result = await UserController.confirmLogin(req.body);
+        const result = await confirmLogin(req.body);
         res.cookie('x-access-token', result.data.token);
         res.send(result);
     } catch (err) {
@@ -27,24 +27,6 @@ router.get('/info', checkTokenMiddleware('user'), (req: UserRequestInterface, re
     res.send({
         data: req.user.data,
     });
-});
-
-router.get('/', checkTokenMiddleware('admin'), async (_req, res, next) => {
-    try {
-        const result = await UserController.getUserList();
-        res.send(result);
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.get('/:id', checkTokenMiddleware('admin'), async (req, res, next) => {
-    try {
-        const result = await UserController.getUserById(req.params.id);
-        res.send(result);
-    } catch (err) {
-        next(err);
-    }
 });
 
 export default router;
