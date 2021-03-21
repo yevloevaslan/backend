@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: graphql
+spec:
+  selector:
+    matchLabels:
+      app: graphql
+  replicas: 1
+  serviceName: "translator-backend-graphql-service"
+  template:
+    metadata:
+      labels:
+        app: graphql
+    spec:
+      containers:
+        - name: graphql
+          image: "{{ .Values.app.graphql.image }}:{{ .Values.app.graphql.tag }}"
+          imagePullPolicy: Always
+          env:
+            - name: MONGO_DB_NAME
+              value: "translator"
+            - name: MONGO_DB_PORT
+              value: "27017"
+            - name: MONGO_DB_URI
+              value: "mongo-service"
+            - name: PORT
+              value: "8887"
+            - name: JWT_KEY_GRAPHQL
+              valueFrom:
+                  secretKeyRef:
+                    name: backend-secrets
+                    key: jwtKeyGraphql
+          ports:
+            - containerPort: 8887
+      imagePullSecrets:
+        - name: docker-registry
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: translator-backend-graphql-service
+  labels:
+    name: translator-backend-graphql-service
+spec:
+  type: ClusterIP
+  ports:
+    - name: backend
+      port: 80
+      protocol: TCP
+      targetPort: 8887
+  selector:
+    app: backend

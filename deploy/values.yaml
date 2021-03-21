@@ -2,3 +2,6 @@ app:
   backend:
     image: musaushev/translator
     tag: 1.0.0
+  graphql:
+    image: musaushev/graphql
+    tag: 1.0.0
