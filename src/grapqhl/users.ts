@@ -1,12 +1,16 @@
-import { GraphQLList, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLString } from 'graphql';
 import {UserModel} from '../db/models';
 import moment from 'moment';
 import { IUser } from '../entities';
+import { paginationParams } from '../libs/checkInputParameters';
 
-const userResolve = async ({_id}: {_id: string}) => {
+type UserResolveResult = Array<IUser>;
+
+const userResolve = async ({_id}: {_id: string}, options: {page?: number, limit?: number} = {}): Promise<UserResolveResult> => {
     const query: {_id?: string} = {};
     if (_id) query._id = _id;
-    const users = await UserModel.find(query).lean();
+    const {skip, limit} = paginationParams(options.page, options.limit);
+    const users = await UserModel.find(query).lean().limit(limit).skip(skip);
     return users.map(u => {
         u.createdAt = moment(u.createdAt).toISOString();
         u.updatedAt = moment(u.updatedAt).toISOString();
@@ -28,11 +32,23 @@ const UserQuery = {
     type: GraphQLList(UserGraphQLType),
     args: {
         _id: {type: GraphQLString},
+        limit: {type: GraphQLInt},
+        page: {type: GraphQLInt},
     },
-    resolve: async (_, args: {_id: string}): Promise<Array<IUser>> => {
-        const users = await userResolve({_id: args._id});
+    resolve: async (_, args: {_id: string, page: number, limit: number}): Promise<UserResolveResult> => {
+        const users = await userResolve({_id: args._id}, {page: args.page, limit: args.limit});
         return users;
     },
 };
 
-export default UserQuery;
+const UserCountQuery = {
+    type: GraphQLInt,
+    resolve: async (): Promise<number> => {
+        return UserModel.countDocuments();
+    },
+};
+
+export {
+    UserQuery,
+    UserCountQuery,
+};
