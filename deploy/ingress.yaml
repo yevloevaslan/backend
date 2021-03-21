@@ -9,17 +9,17 @@ spec:
   rules:
     - http:
         paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: translator-backend-service
-                port: 
-                  number: 80
           - path: /api/admin
             pathType: Prefix
             backend:
               service:
                 name: translator-backend-graphql-service
                 port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: translator-backend-service
+                port: 
                   number: 80

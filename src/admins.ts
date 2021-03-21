@@ -15,7 +15,7 @@ const query = new GraphQLObjectType({
 
 const schema = new GraphQLSchema({query});
 
-adminApp.use('/graphql', graphqlHTTP({
+adminApp.use('/api/admin', graphqlHTTP({
     schema,
     graphiql: true,
 }));

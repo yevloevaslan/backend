@@ -24,7 +24,7 @@ spec:
               value: "27017"
             - name: MONGO_DB_URI
               value: "mongo-service"
-            - name: PORT
+            - name: ADMIN_PORT
               value: "8887"
             - name: JWT_KEY_GRAPHQL
               valueFrom:
@@ -45,9 +45,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: backend
+    - name: graphql
       port: 80
       protocol: TCP
       targetPort: 8887
   selector:
-    app: backend
+    app: graphql

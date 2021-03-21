@@ -5,3 +5,8 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     image: musaushev/translator:1.0.0
+  graphql:
+    build:
+      context: ./
+      dockerfile: ./Graphql.DockerFile
+    image: musaushev/graphql:1.0.0 
