@@ -1,4 +1,4 @@
-import { IConfirmCode, IUser } from '../entities';
+import { IUser } from '../entities';
 import {User, ConfirmCode} from './classes/index';
 import {createToken} from '../controllers/TokenController';
 import Joi from 'joi';
@@ -11,6 +11,13 @@ interface confirmLoginResult {
     },
 }
 
+interface loginResult {
+    data: {
+        _id: string,
+        updatedAt: string,
+    }
+}
+
 const loginInputSchema = Joi.object({
     phone: Joi.string().required().pattern(/^((\+7)+([0-9]){10})$/),
 });
@@ -20,19 +27,23 @@ const confirmInputSchema = Joi.object({
     code: Joi.string().required(),
 });
 
-const login = async (data: {phone?: unknown}): Promise<{data: IConfirmCode}> => {
+const login = async (data: {phone?: unknown}): Promise<loginResult> => {
     schemaErrorHandler(loginInputSchema.validate(data));
     const confirmCode = await ConfirmCode({phone: String(data.phone)});
     await confirmCode.generateCode();
+    //sendcode
     return {
-        data: confirmCode.data,
+        data: {
+            _id: confirmCode.data._id,
+            updatedAt: confirmCode.data.updatedAt,
+        },
     };
 };
 
 const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmLoginResult> => {
     schemaErrorHandler(confirmInputSchema.validate(data));
     const confirmCode = await ConfirmCode({_id: data._id});
-    await confirmCode.checkCode(data. code);
+    await confirmCode.checkCode(data.code);
     const user = await User({phone: confirmCode.getPhone});
     const token = await createToken({_id: user._id, type: 'user'});
     return {
