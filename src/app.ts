@@ -6,6 +6,7 @@ const {NODE_ENV} = process.env;
 import routes from './routes';
 import cookieParser from 'cookie-parser';
 import db from './db';
+import { apiErrorHandler } from './libs/errorHandler';
 db();
 
 if (NODE_ENV !== 'production') {
@@ -32,12 +33,6 @@ app.use((_req: Request, _res: Response, next: NextFunction) => {
     return next(notFound('Not found'));
 });
 
-app.use((error, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(new Date(), error);
-    res.status(error.output ? error.output.statusCode || 500 : 500).send({
-        error: error.output ? error.output.payload.message : 'Server error',
-        data: null,
-    });
-});
+app.use(apiErrorHandler);
 
 export default app;

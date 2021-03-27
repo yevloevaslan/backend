@@ -84,10 +84,20 @@ const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: n
     };
 };
 
+const usersCount = async () => {
+    const count = await UserModel.countDocuments();
+    return {
+        data: {
+            count,
+        },
+    };
+};
+
 
 export {
     login,
     confirmLogin,
     getUser,
     getUsers,
+    usersCount,
 };

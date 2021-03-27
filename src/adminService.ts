@@ -1,4 +1,4 @@
-import adminApp from './admins';
+import adminApp from './grapqhl';
 import config from './config';
 const {adminPort} = config;
 import './scripts/insertTestAdmin';
