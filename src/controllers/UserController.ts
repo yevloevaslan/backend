@@ -4,10 +4,19 @@ import {createToken} from '../controllers/TokenController';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import UserClass from './classes/UserClass';
+import { paginationParams } from '../libs/checkInputParameters';
+import { UserModel } from '../db/models';
+import moment from 'moment';
 interface confirmLoginResult {
     data: {
         token: string,
         user: IUser,
+    },
+}
+
+interface getUsersResult {
+    data: {
+        users: Array<IUser>
     },
 }
 
@@ -59,8 +68,26 @@ const getUser = async (query: {_id: string}): Promise<UserClass> => {
     return user;
 };
 
+const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: number} = {}): Promise<getUsersResult> => {
+    const query: {_id?: string} = {};
+    if (_id) query._id = _id;
+    const {skip, limit} = paginationParams(options.page, options.limit);
+    const users = await UserModel.find(query).lean().limit(limit).skip(skip);
+    return {
+        data: {
+            users: users.map(u => {
+                u.createdAt = moment(u.createdAt).toISOString();
+                u.updatedAt = moment(u.updatedAt).toISOString();
+                return u;
+            }),
+        },
+    };
+};
+
+
 export {
     login,
     confirmLogin,
     getUser,
+    getUsers,
 };

@@ -33,11 +33,6 @@ export const ConfirmCode = async (data: {phone?: string, _id?: string}): Promise
     return confirmCode;
 };
 
-export const Users = async (): Promise<Array<UserClass>> => {
-    const users = await UserModel.find();
-    return users.map(user => new UserClass(user));
-};
-
 export const Admin = async (query: {_id?: string, login?: string}): Promise<AdminClass> => {
     const admin = await AdminModel.findOne(query);
     if (!admin) throw notFound('Admin not found');
