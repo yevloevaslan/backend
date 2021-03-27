@@ -3,6 +3,7 @@ import { buildSchema } from 'graphql';
 import { login } from '../controllers/AdminController';
 import { getUsers, usersCount } from '../controllers/UserController';
 import { IUser } from '../entities';
+
 type UserResolveResult = Array<IUser>;
 
 export const schema = buildSchema(`
