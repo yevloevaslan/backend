@@ -84,7 +84,7 @@ const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: n
     };
 };
 
-const usersCount = async () => {
+const usersCount = async (): Promise<{data: {count: number}}> => {
     const count = await UserModel.countDocuments();
     return {
         data: {
