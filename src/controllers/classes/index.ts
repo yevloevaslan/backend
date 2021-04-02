@@ -11,6 +11,8 @@ export const User = async (data: {phone?: string, _id?: string}): Promise<UserCl
         if (query.phone) {
             userData = await new UserModel({
                 phone: data.phone,
+                score: 0,
+                firstIn: true,
             }).save();
         }
         if (!userData) throw notFound('User not found');

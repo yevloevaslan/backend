@@ -42,4 +42,33 @@ paths:
               type: string
       responses:
         200:
+          description: if param firstIn true, then redirect user on update info about him
+  /users/info:
+    get:
+      tags:
+      - User
+      summary: Get info about me
+      responses:
+        200:
+          description: ok
+    put:
+      tags:
+      - User
+      summary: Update info about me
+      parameters:
+      - in: body
+        name: body
+        schema:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+            middleName:
+              type: string
+            email:
+              type: string
+      responses:
+        200:
           description: ok

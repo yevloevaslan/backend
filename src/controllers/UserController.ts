@@ -7,6 +7,7 @@ import UserClass from './classes/UserClass';
 import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
+import { userUpdateInterface } from './interfaces';
 interface confirmLoginResult {
     data: {
         token: string,
@@ -20,11 +21,21 @@ interface getUsersResult {
     },
 }
 
+interface usersCountResult {
+    data: {
+        count: number,
+    },
+}
+
 interface loginResult {
     data: {
         _id: string,
         updatedAt: string,
     }
+}
+
+interface voidResult {
+    data: null,
 }
 
 const loginInputSchema = Joi.object({
@@ -55,11 +66,20 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
     await confirmCode.checkCode(data.code);
     const user = await User({phone: confirmCode.getPhone});
     const token = await createToken({_id: user._id, type: 'user'});
+    const userData = user.data;
+    if (user.data.firstIn) await user.endFirstLogin();
     return {
         data: {
             token,
-            user: user.data,
+            user: userData,
         },
+    };
+};
+
+const updateUserData = async (user: UserClass, data: userUpdateInterface): Promise<voidResult> => {
+    await user.updateUserData(data);
+    return {
+        data: null,
     };
 };
 
@@ -84,7 +104,7 @@ const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: n
     };
 };
 
-const usersCount = async () => {
+const usersCount = async (): Promise<usersCountResult> => {
     const count = await UserModel.countDocuments();
     return {
         data: {
@@ -100,4 +120,5 @@ export {
     getUser,
     getUsers,
     usersCount,
+    updateUserData,
 };
