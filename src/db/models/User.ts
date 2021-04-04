@@ -4,6 +4,13 @@ import {IUser} from '../../entities/User.entity';
 export interface IUserModel extends IUser, Document {
     _id: string,
     phone: string,
+    firstIn: boolean,
+    score: number,
+    birthday: string,
+    firstName: string,
+    lastName: string,
+    middleName: string,
+    email: string,
     createdAt: string,
     updatedAt: string,
 }
@@ -13,6 +20,29 @@ const User = new Schema({
         type: String,
         required: true,
         unique: true,
+    },
+    firstIn: {
+        type: Boolean,
+        default: true,
+    },
+    score: {
+        type: Number,
+        default: 0,
+    },
+    birthday: {
+        type: Date,
+    },
+    firstName: {
+        type: String,
+    },
+    lastName: {
+        type: String,
+    },
+    middleName: {
+        type: String,
+    },
+    email: {
+        type: String,
     },
 }, {
     timestamps: true,
