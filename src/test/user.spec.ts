@@ -2,7 +2,7 @@ const {describe, it, afterEach, afterAll, expect} = require('@jest/globals');
 import request from 'supertest';
 import app from '../app';
 import {deleteAll} from './setup';
-import {ConfirmCodeModel} from '../db/models';
+import {ConfirmCodeModel, UserModel} from '../db/models';
 import {confirmLogin, login} from '../controllers/UserController';
 
 describe('User routes tests', () => {
@@ -89,12 +89,28 @@ describe('User routes tests', () => {
             .put('/api/users/info')
             .set({'x-access-token': confirmLoginData.data.token})
             .send({
-                username: 'TestName',
-                lastname: 'TestLastName',
-                middlename: 'TestMiddleName',
-                birthday: '01-01-2001',
+                firstName: 'TestName',
+                lastName: 'TestLastName',
+                middleName: 'TestMiddleName',
+                birthday: '2001-01-01',
                 email: 'email@mail.ru',
             })
             .expect(200);
+        const user = await UserModel.find({email: 'email@mail.ru'});
+        expect(user[0]).toBe({
+            _id: expect.any(String),
+            firstName: 'TestName',
+            lastName: 'TestLastName',
+            middleName: 'TestMiddleName',
+            birthday: '2001-01-01T00:00:00.000Z',
+            email: 'email@mail.ru',
+            createdAt: expect.any(Date),
+            updatedAt: expect.any(Date),
+            firstIn: false,
+            phone: '+71234567890',
+            score: 0,
+            __v: 0,
+
+        });
     });
 });
