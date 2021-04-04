@@ -1,4 +1,4 @@
-const {describe, it, afterEach, afterAll, expect} = require('@jest/globals');
+const {describe, it, afterAll, expect} = require('@jest/globals');
 import request from 'supertest';
 import app from '../app';
 import {deleteAll} from './setup';
@@ -7,9 +7,6 @@ import {confirmLogin, login} from '../controllers/UserController';
 
 describe('User routes tests', () => {
     afterAll(async () => {
-        await deleteAll();
-    });
-    afterEach(async () => {
         await deleteAll();
     });
 
@@ -56,6 +53,34 @@ describe('User routes tests', () => {
                 });
             });
     });
+    it('firstIn:false', async() => {
+        const phone = '+71234567890';
+        const loginData = await login({phone});
+        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const code = confirmCodeModel[0].code;
+        await request(app)
+            .post('/api/users/confirm')
+            .send({
+                _id: loginData.data._id,
+                code,
+            })
+            .expect(200)
+            .then((res) => {
+                expect(res.body).toEqual({
+                    data: {
+                        token: expect.any(String),
+                        user: {
+                            _id: expect.any(String),
+                            createdAt: expect.any(String),
+                            phone: expect.any(String),
+                            firstIn: false,
+                            score: 0,
+                            updatedAt: expect.any(String),
+                        },
+                    },
+                });
+            });
+    });
     it('success get user info', async () => {
         const phone = '+71234567890';
         const loginData = await login({phone});
@@ -92,25 +117,16 @@ describe('User routes tests', () => {
                 firstName: 'TestName',
                 lastName: 'TestLastName',
                 middleName: 'TestMiddleName',
-                birthday: '2001-01-01',
+                birthday: '2001-01-01T00:00:00.000Z',
                 email: 'email@mail.ru',
             })
             .expect(200);
-        const user = await UserModel.find({email: 'email@mail.ru'});
-        expect(user[0]).toBe({
-            _id: expect.any(String),
-            firstName: 'TestName',
-            lastName: 'TestLastName',
-            middleName: 'TestMiddleName',
-            birthday: '2001-01-01T00:00:00.000Z',
-            email: 'email@mail.ru',
-            createdAt: expect.any(Date),
-            updatedAt: expect.any(Date),
-            firstIn: false,
-            phone: '+71234567890',
-            score: 0,
-            __v: 0,
-
-        });
+        const userModel = await UserModel.find({email: 'email@mail.ru'});
+        const userData = userModel[0];
+        expect(userData.firstName).toEqual('TestName');
+        expect(userData.lastName).toEqual('TestLastName');
+        expect(userData.middleName).toEqual('TestMiddleName');
+        expect(userData.birthday).toEqual(new Date('2001-01-01T00:00:00.000Z'));
+        expect(userData.email).toEqual('email@mail.ru');
     });
 });
