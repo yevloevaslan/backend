@@ -47,6 +47,14 @@ const confirmInputSchema = Joi.object({
     code: Joi.string().required(),
 });
 
+const userUpdateInputSchema = Joi.object({
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    middleName: Joi.string(),
+    birthday: Joi.string().pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
+    email: Joi.string().email(),
+});
+
 const login = async (data: {phone?: unknown}): Promise<loginResult> => {
     schemaErrorHandler(loginInputSchema.validate(data));
     const confirmCode = await ConfirmCode({phone: String(data.phone)});
@@ -77,6 +85,8 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
 };
 
 const updateUserData = async (user: UserClass, data: userUpdateInterface): Promise<voidResult> => {
+    schemaErrorHandler(userUpdateInputSchema.validate(data));
+    
     await user.updateUserData(data);
     return {
         data: null,
