@@ -8,6 +8,11 @@
     "dev-admin-service": "nodemon src/adminService.ts",
     "test": "jest --config=jest.config.cjs --runInBand --detectOpenHandles --forceExit"
   },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MustafaAushev/translater.git"
@@ -31,6 +36,7 @@
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
     "graphql": "^15.5.0",
+    "husky": "^6.0.0",
     "jest": "^26.6.3",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
