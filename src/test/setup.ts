@@ -16,10 +16,12 @@ beforeAll(async () => {
     await mongoose.disconnect();
     mongoServer = new MongoMemoryServer();
     const mongoUri = await mongoServer.getUri();
-    await mongoose.connect(mongoUri, opts, async (err) => {
-        if (err) throw err;
-        await deleteAll();
-        console.log('test db has been started');
+    await new Promise((resolve, reject) => {
+        mongoose.connect(mongoUri, opts, async (err) => {
+            if (err) reject(err);
+            await deleteAll();
+            resolve(console.log('test db has been started'));
+        });
     });
 });
 
