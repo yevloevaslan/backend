@@ -48,6 +48,8 @@ describe('User routes tests', () => {
                             _id: expect.any(String),
                             createdAt: expect.any(String),
                             phone: expect.any(String),
+                            firstIn: true,
+                            score: 0,
                             updatedAt: expect.any(String),
                         },
                     },
@@ -70,9 +72,29 @@ describe('User routes tests', () => {
                         _id: expect.any(String),
                         createdAt: expect.any(String),
                         phone: expect.any(String),
+                        firstIn: false,
+                        score: 0,
                         updatedAt: expect.any(String),
                     },
                 });
             });
+    });
+    it('success put user info', async () => {
+        const phone = '+71234567890';
+        const loginData = await login({phone});
+        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const code = confirmCodeModel[0].code;
+        const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
+        await request(app)
+            .put('/api/users/info')
+            .set({'x-access-token': confirmLoginData.data.token})
+            .send({
+                username: 'TestName',
+                lastname: 'TestLastName',
+                middlename: 'TestMiddleName',
+                birthday: '01-01-2001',
+                email: 'email@mail.ru',
+            })
+            .expect(200);
     });
 });
