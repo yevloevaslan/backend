@@ -12,7 +12,7 @@ export function checkTokenMiddleware(type?: 'user'|'admin') {
             req.user = user;
             next();
         } catch (err) {
-            next(err);
+            throw unauthorized(err);
         }
     };
 } 
