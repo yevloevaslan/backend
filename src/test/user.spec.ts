@@ -114,7 +114,7 @@ describe('User routes tests', () => {
             .put('/api/users/info')
             .set({'x-access-token': confirmLoginData.data.token})
             .send({
-                firstName: 'TestName',
+                firstame: 'TestName',
                 lastName: 'TestLastName',
                 middleName: 'TestMiddleName',
                 birthday: '2001-01-01T00:00:00.000Z',
