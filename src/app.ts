@@ -11,7 +11,7 @@ db();
 
 if (NODE_ENV !== 'production') {
     app.use((req: Request, _res: Response, next: NextFunction) => {
-        console.log(`${new Date()} ${req.ip}:${req.method} ${req.url}`);
+        console.log(`${new Date()} ${req.ip}:${req.method} ${req.url} ${JSON.stringify(req.body)}`);
         next();
     });
 }
