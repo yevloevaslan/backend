@@ -109,6 +109,7 @@ const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: n
             users: users.map(u => {
                 u.createdAt = moment(u.createdAt).toISOString();
                 u.updatedAt = moment(u.updatedAt).toISOString();
+                if (!u.score) u.score = 0;
                 return u;
             }),
         },
