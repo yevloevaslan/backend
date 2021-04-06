@@ -53,6 +53,7 @@ const userUpdateInputSchema = Joi.object({
     middleName: Joi.string(),
     birthday: Joi.string().pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
     email: Joi.string().email(),
+    sex: Joi.string().valid('f', 'm'),
 });
 
 const login = async (data: {phone?: unknown}): Promise<loginResult> => {

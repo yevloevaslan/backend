@@ -44,6 +44,13 @@ const User = new Schema({
     email: {
         type: String,
     },
+    sex: {
+        type: String,
+        enum: [
+            'm',
+            'f',
+        ],
+    },
 }, {
     timestamps: true,
 });

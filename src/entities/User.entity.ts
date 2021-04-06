@@ -8,6 +8,7 @@ export interface IUser {
     lastName: string,
     middleName: string,
     email: string,
+    sex: 'm' | 'f',
     createdAt: string,
     updatedAt: string,
 }
