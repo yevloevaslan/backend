@@ -6,11 +6,11 @@ export interface userUpdateInterface {
     email: string,
 }
 
-export interface taskDataInterface {
+export interface taskDataInterface<T> {
     title: string,
     description: string,
     type: string,
     level: string,
     points: string,
-    params: any,
+    params: T,
 }

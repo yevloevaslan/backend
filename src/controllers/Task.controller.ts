@@ -1,7 +1,8 @@
 import { taskDataInterface } from './interfaces';
 import {TaskFactory} from './classes';
+import { TaskParams } from '../entities/Task';
 
-const createTask = async (data: taskDataInterface): Promise<void> => {
+const createTask = async (data: taskDataInterface<TaskParams>): Promise<void> => {
     await TaskFactory(data);
 };
 

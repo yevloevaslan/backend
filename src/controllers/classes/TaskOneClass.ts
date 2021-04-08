@@ -10,17 +10,8 @@ export default class TaskOneClass implements TaskClassInterface {
         this.task = task;
     }
 
-    async createTask(data: taskDataInterface): Promise<void> {
-        const params: TaskOne = {
-            photos: data.params.photos,
-            text: data.params.text,
-            answer: data.params.answer,
-        };
-        delete data.params;
-        this.task = await new TaskModel({
-            ...data,
-            params,
-        });
+    async createTask(data: taskDataInterface<TaskOne>): Promise<void> {
+        this.task = await new TaskModel(data);
     }
 
     checkAnswer(value: unknown): boolean {
