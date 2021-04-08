@@ -1,4 +1,5 @@
 export interface ITask<T> {
+  _id: string,
   title: string,
   description: string,
   type: string,
