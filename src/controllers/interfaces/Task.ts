@@ -1,4 +1,6 @@
-export interface taskUpdateInterface {
-  photos: [string],
-  answer: string,
+import { taskDataInterface } from '.';
+
+export interface TaskClassInterface {
+    checkAnswer(value: unknown): boolean;
+    createTask(data: taskDataInterface): void;
 }

@@ -1,39 +1,30 @@
-import { TaskModel } from '../../db/models/Task';
-import { Task, TaskOne } from '../../entities/Task';
-import { taskUpdateInterface } from '../interfaces/Task';
+import { ITaskModel, TaskModel } from '../../db/models/Task';
+import { TaskOne, TaskParams } from '../../entities/Task';
+import { taskDataInterface } from '../interfaces';
+import { TaskClassInterface } from '../interfaces/Task';
 
-export default class TaskOneClass {
-  private task: TaskModel;
-  private params: TaskOne;
-  constructor(data: TaskModel) {
-    this.task = data;
-    this.params = data.params;
-  }
+export default class TaskOneClass implements TaskClassInterface {
+    private task: ITaskModel<TaskParams>;
 
-  get title(): string {
-    return this.task.title;
-  }
+    constructor(task?: ITaskModel<TaskParams>) {
+        this.task = task;
+    }
 
-  get description(): string {
-    return this.task.description;
-  }
+    async createTask(data: taskDataInterface): Promise<void> {
+        const params: TaskOne = {
+            photos: data.params.photos,
+            text: data.params.text,
+            answer: data.params.answer,
+        };
+        delete data.params;
+        this.task = await new TaskModel({
+            ...data,
+            params,
+        });
+    }
 
-  get type(): string {
-    return this.task.type;
-  }
-
-  get level(): string {
-    return this.task.level;
-  }
-
-  get points(): string {
-    return this.task.points;
-  }
-
-  get data(): Task {
-    return {
-      photos: this.params,
-      answer: this.taskUpdateInterface.answer,
-    };
-  }
+    checkAnswer(value: unknown): boolean {
+        if (value === this.task.params.answer) return true;
+        return false;
+    }
 }

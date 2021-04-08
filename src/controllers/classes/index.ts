@@ -1,7 +1,11 @@
 import { notFound } from 'boom';
 import { AdminModel, ConfirmCodeModel, UserModel } from '../../db/models';
+import { TaskModel } from '../../db/models/Task';
+import { taskDataInterface } from '../interfaces';
+import { TaskClassInterface } from '../interfaces/Task';
 import AdminClass from './AdminClass';
 import ConfirmCodeClass from './ConfirmCodeClass';
+import TaskOneClass from './TaskOneClass';
 import UserClass from './UserClass';
 
 export const User = async (data: {phone?: string, _id?: string}): Promise<UserClass> => {
@@ -39,4 +43,23 @@ export const Admin = async (query: {_id?: string, login?: string}): Promise<Admi
     const admin = await AdminModel.findOne(query);
     if (!admin) throw notFound('Admin not found');
     return new AdminClass(admin);
+};
+
+export const TaskFactory = async (data?: taskDataInterface, _id?: string): Promise<TaskClassInterface> => {
+    let taskClass: TaskClassInterface;
+    if (_id) {
+        const task = await TaskModel.findById(_id);
+        switch (task.type) {
+        case '1': taskClass = new TaskOneClass(task); break;
+        }
+        
+    }
+    switch (data.type) {
+    case '1': {
+        taskClass = new TaskOneClass();
+        await taskClass.createTask(data);
+        break;
+    }
+    }
+    return taskClass;
 };
