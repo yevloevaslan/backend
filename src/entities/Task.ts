@@ -11,7 +11,11 @@ export interface ITask<T> {
 export interface TaskOne {
   photos: [string],
   text: string,
+<<<<<<< HEAD
   answer: string,
+=======
+  answer: string, // Ответ следует хранить внутри параметров у каждого задания так как у них могут появиться ответы с выбором двух вариантов ответа
+>>>>>>> 5b390ab475507ed82dcd6120d87eca97613d808a
 }
 
 export interface TaskTwo {
@@ -37,4 +41,8 @@ export interface TaskFive {
   answer: string,
 }
 
+<<<<<<< HEAD
 export type TaskParams = TaskOne | TaskTwo | TaskThree | TaskFour | TaskFive;
+=======
+export type TaskParams = TaskOne | TaskTwo | TaskThree | TaskFour | TaskFive;
+>>>>>>> 5b390ab475507ed82dcd6120d87eca97613d808a
