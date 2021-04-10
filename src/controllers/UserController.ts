@@ -86,7 +86,7 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
 
 const updateUserData = async (user: UserClass, data: userUpdateInterface): Promise<voidResult> => {
     schemaErrorHandler(userUpdateInputSchema.validate(data));
-    
+
     await user.updateUserData(data);
     return {
         data: null,

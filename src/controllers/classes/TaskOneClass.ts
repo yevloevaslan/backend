@@ -1,39 +1,68 @@
-import { TaskModel } from '../../db/models/Task';
-import { Task, TaskOne } from '../../entities/Task';
-import { taskUpdateInterface } from '../interfaces/Task';
+import { ITaskModel, TaskModel } from '../../db/models/Task';
+import { ITask, TaskOne, TaskParams } from '../../entities/Task';
+import { taskDataInterface } from '../interfaces';
+import { TaskClassInterface } from '../interfaces/Task';
+import Joi from 'joi';
+import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 
-export default class TaskOneClass {
-  private task: TaskModel;
-  private params: TaskOne;
-  constructor(data: TaskModel) {
-    this.task = data;
-    this.params = data.params;
+const taskParamsShema = Joi.object({
+  photos: [Joi.string()],
+  text: Joi.string(),
+  answer: Joi.string(),
+});
+
+const taskMainShema = Joi.object({
+  _id: Joi.string(),
+  title: Joi.string(),
+  description: Joi.string(),
+  type: Joi.string(),
+  level: Joi.string(),
+  points: Joi.string(),
+});
+
+export default class TaskOneClass implements TaskClassInterface {
+  private task: ITaskModel<TaskParams>;
+
+  constructor(task?: ITaskModel<TaskParams>) {
+    this.task = task;
   }
 
-  get title(): string {
-    return this.task.title;
+  checkTask(value: unknown): boolean {
+    if (value === this.task.params.answer) return true;
+    return false;
   }
 
-  get description(): string {
-    return this.task.description;
+  async createTask(data: taskDataInterface<TaskOne>): Promise<void> {
+    schemaErrorHandler(taskMainShema.validate(data));
+    schemaErrorHandler(taskParamsShema.validate(data));
+    this.task = await new TaskModel(data);
   }
 
-  get type(): string {
-    return this.task.type;
+  async updateTask(data: taskDataInterface<TaskOne>): Promise<void> {
+    if (data.title) this.task.title = data.title;
+    if (data.description) this.task.description = data.description;
+    if (data.type) this.task.type = data.type;
+    if (data.level) this.task.level = data.level;
+    if (data.points) this.task.points = data.points;
+    if (data.params) {
+      schemaErrorHandler(taskParamsShema.validate(data));
+      this.task.params = data.params
+    }
   }
 
-  get level(): string {
-    return this.task.level;
+  async deleteTask() {
+    console.log('');
   }
 
-  get points(): string {
-    return this.task.points;
-  }
-
-  get data(): Task {
+  get data(): ITask<TaskOne> {
     return {
-      photos: this.params,
-      answer: this.taskUpdateInterface.answer,
+      _id: this.task._id,
+      title: this.task.title,
+      type: this.task.type,
+      description: this.task.description,
+      points: this.task.points,
+      level: this.task.level,
+      params: this.task.params as TaskOne,
     };
   }
 }
