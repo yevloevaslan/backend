@@ -1,39 +1,49 @@
 import { taskDataInterface } from './interfaces';
 import { TaskFactory } from './classes';
 import { TaskParams } from '../entities/Task';
-import { TaskModel } from '../db/models/Task';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import Joi from 'joi';
 import { ITask } from '../entities/Task';
+import { TaskModel } from '../db/models/Task';
+import { paginationParams } from '../libs/checkInputParameters';
 
 interface getTasksResult {
-  data: {
-    tasks: Array<ITask<TaskParams>>,
-  },
+    data: {
+        tasks: Array<{
+            _id: string,
+            title: string,
+            description: string,
+            type: string,
+            level: string,
+            points: string,
+        }>,
+    },
+    meta: {
+        count: number,
+    }
 }
 
-interface getTask {
-  data: {
-    task: ITask<TaskParams>,
-  },
+interface getTaskResult {
+    data: {
+        task: ITask<TaskParams>,
+    },
 }
 
 interface voidResult {
-  data: null,
+    data: null,
 }
 
 interface createTask {
-  data: {
-    title: string,
-    description: string,
-    type: string,
-    level: string,
-    points: string,
-    params: object,
-  }
+    data: {
+        title: string,
+        description: string,
+        type: string,
+        level: string,
+        points: string,
+    }
 }
 
-const taskMainShema = Joi.object({
+const taskMainSchema = Joi.object({
     _id: Joi.string(),
     title: Joi.string(),
     description: Joi.string(),
@@ -52,9 +62,10 @@ const taskUpdateInputSchema = Joi.object({
 });
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTask> => {
-    schemaErrorHandler(taskMainShema.validate(data));
+    schemaErrorHandler(taskMainSchema.validate(data));
 
     await TaskFactory(data);
+    
     return {
         data: {
             title: data.title,
@@ -62,7 +73,6 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
             type: data.type,
             level: data.level,
             points: data.points,
-            params: data.params,
         },
     };
 };
@@ -72,37 +82,46 @@ const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
     task.checkTask(answer);
 };
 
-// const getTask = async (_id: string): Promise<getTask> => {
-//   const task = await TaskFactory(null, _id);
-//   return task;
-// };
+const getTask = async (_id: string): Promise<getTaskResult> => {
+    const task = await TaskFactory(null, _id);
+    return {
+        data: {
+            task: task.data(),
+        },
+    };
+};
 
-// const getTasks = async (): Promise<getTasksResult> => {
-
-//   const tasks = await TaskModel.find({});
-//   return tasks;
-// };
+const getTasks = async (query: {type?: string}, options: {limit: number, page: number}): Promise<getTasksResult> => {
+    const {skip, limit} = paginationParams(options.page, options.limit);
+    const [tasks, count] = await Promise.all([
+        TaskModel.find(query, {params: 0}).skip(skip).limit(limit),
+        TaskModel.countDocuments(query),
+    ]);
+    return {
+        data: {
+            tasks,
+        },
+        meta: {
+            count,
+        },
+    };
+};
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
+    await TaskModel.deleteOne({_id});
     return {
         data: null,
     };
 };
 
-const updateTask = async (data: taskDataInterface<TaskParams>): Promise<createTask> => {
+const updateTask = async (id: string, data: taskDataInterface<TaskParams>): Promise<createTask> => {
     schemaErrorHandler(taskUpdateInputSchema.validate(data));
 
-    await TaskFactory(data);
+    const task = await TaskFactory(null, id);
+    await task.updateTask(data);
 
     return {
-        data: {
-            title: data.title,
-            description: data.description,
-            type: data.type,
-            level: data.level,
-            points: data.points,
-            params: data.params,
-        },
+        data: null,
     };
 };
 
@@ -110,8 +129,8 @@ const updateTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
 export {
     createTask,
     checkTaskAnswer,
-    // getTask,
-    // getTasks,
+    getTask,
+    getTasks,
     deleteTask,
     updateTask,
 };

@@ -4,8 +4,9 @@ import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
+import { conflict } from 'boom';
 
-const taskParamsShema = Joi.object({
+const taskParamsSchema = Joi.object({
     text: Joi.string(),
     answers: [Joi.string()],
     answer: Joi.string(),
@@ -24,8 +25,12 @@ export default class TaskOneClass implements TaskClassInterface {
     }
 
     async createTask(data: taskDataInterface<TaskTwo>): Promise<void> {
-        schemaErrorHandler(taskParamsShema.validate(data));
-        this.task = await new TaskModel(data);
+        if (this.task) {
+            console.error('Conflict in creating task two', JSON.stringify({task: this.task, data}));
+            throw conflict('Задание уже существует.');
+        }
+        schemaErrorHandler(taskParamsSchema.validate(data));
+        this.task = await new TaskModel(data).save();
     }
 
     async updateTask(data: taskDataInterface<TaskTwo>): Promise<void> {
@@ -35,12 +40,12 @@ export default class TaskOneClass implements TaskClassInterface {
         if (data.level) this.task.level = data.level;
         if (data.points) this.task.points = data.points;
         if (data.params) {
-            schemaErrorHandler(taskParamsShema.validate(data));
+            schemaErrorHandler(taskParamsSchema.validate(data));
             this.task.params = data.params;
         }
     }
 
-    get data(): ITask<TaskTwo> {
+    data(): ITask<TaskTwo> {
         return {
             _id: this.task._id,
             title: this.task.title,
@@ -48,7 +53,7 @@ export default class TaskOneClass implements TaskClassInterface {
             description: this.task.description,
             points: this.task.points,
             level: this.task.level,
-            params: this.task.params as TaskTwo,
+            params: this.task.params as unknown as TaskTwo,
         };
     }
 }

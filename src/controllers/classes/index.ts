@@ -1,4 +1,4 @@
-import { notFound } from 'boom';
+import { badRequest, notFound } from 'boom';
 import { AdminModel, ConfirmCodeModel, UserModel } from '../../db/models';
 import AdminClass from './AdminClass';
 import ConfirmCodeClass from './ConfirmCodeClass';
@@ -7,7 +7,7 @@ import TaskTwoClass from './TaskOneClass';
 import TaskThreeClass from './TaskOneClass';
 import TaskFourClass from './TaskOneClass';
 import TaskFiveClass from './TaskOneClass';
-import { TaskModel } from '../../db/models/Task';
+import { ITaskModel, TaskModel } from '../../db/models/Task';
 import { TaskParams } from '../../entities/Task';
 import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
@@ -51,38 +51,38 @@ export const Admin = async (query: { _id?: string, login?: string }): Promise<Ad
 };
 
 export const TaskFactory = async (data?: taskDataInterface<TaskParams>, _id?: string): Promise<TaskClassInterface> => {
-    let taskClass: TaskClassInterface;
+    if (!data && !_id) throw badRequest('Введите данные');
+    let task: ITaskModel<TaskParams>;
     if (_id) {
-        const task = await TaskModel.findById(_id);
-        switch (task.type) {
-        case '1': taskClass = new TaskOneClass(task); break;
-        }
-
+        task = await TaskModel.findById(_id);
+        if (!task) throw notFound('Задание не найдено');
     }
-    switch (data.type) {
+    const taskClass = taskTypeSwitch(task ? task.type : data.type, task);
+    if (!_id) await taskClass.createTask(data);
+    return taskClass;
+};
+
+const taskTypeSwitch = (type, task?: ITaskModel<TaskParams>) => {
+    let taskClass: TaskClassInterface;
+    switch (type) {
     case '1': {
-        taskClass = new TaskOneClass();
-        await taskClass.createTask(data);
+        taskClass = task ? new TaskOneClass(task) : new TaskOneClass();
         break;
     }
     case '2': {
-        taskClass = new TaskTwoClass();
-        await taskClass.createTask(data);
+        taskClass = task ? new TaskTwoClass(task) : new TaskTwoClass();
         break;
     }
     case '3': {
-        taskClass = new TaskThreeClass();
-        await taskClass.createTask(data);
+        taskClass = task ? new TaskThreeClass(task) : new TaskThreeClass();
         break;
     }
     case '4': {
-        taskClass = new TaskFourClass();
-        await taskClass.createTask(data);
+        taskClass = task ? new TaskFourClass(task) : new TaskFourClass();
         break;
     }
     case '5': {
-        taskClass = new TaskFiveClass();
-        await taskClass.createTask(data);
+        taskClass = task ? new TaskFiveClass(task) : new TaskFiveClass();
         break;
     }
     }
