@@ -7,18 +7,15 @@ import Joi from 'joi';
 import { ITask } from '../entities/Task';
 
 interface getTasksResult {
-  [
-    title: string,
-    description: string,
-    type: string,
-    level: string,
-    points: string,
-    params: object,
-  ]
+  data: {
+    tasks: Array<ITask<TaskParams>>,
+  },
 }
 
 interface getTask {
-  ITask<TaskParams>
+  data: {
+    task: ITask<TaskParams>,
+  },
 }
 
 interface voidResult {
@@ -75,7 +72,7 @@ const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
   task.checkTask(answer);
 };
 
-const getTask = async (_id: string): Promise<taskClass> => {
+const getTask = async (_id: string): Promise<getTask> => {
   const task = await TaskFactory(null, _id);
   return task;
 };
