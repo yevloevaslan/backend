@@ -72,16 +72,16 @@ const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
   task.checkTask(answer);
 };
 
-const getTask = async (_id: string): Promise<getTask> => {
-  const task = await TaskFactory(null, _id);
-  //return task;
-};
+// const getTask = async (_id: string): Promise<getTask> => {
+//   const task = await TaskFactory(null, _id);
+//   return task;
+// };
 
-const getTasks = async (): Promise<getTasksResult> => {
+// const getTasks = async (): Promise<getTasksResult> => {
 
-  const tasks = await TaskModel.find({});
-  //return tasks;
-};
+//   const tasks = await TaskModel.find({});
+//   return tasks;
+// };
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
   return {
@@ -110,8 +110,8 @@ const updateTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
 export {
   createTask,
   checkTaskAnswer,
-  getTask,
-  getTasks,
+  // getTask,
+  // getTasks,
   deleteTask,
   updateTask,
 };
