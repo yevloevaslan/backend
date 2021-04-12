@@ -74,13 +74,13 @@ const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
 
 const getTask = async (_id: string): Promise<getTask> => {
   const task = await TaskFactory(null, _id);
-  return task;
+  //return task;
 };
 
 const getTasks = async (): Promise<getTasksResult> => {
 
   const tasks = await TaskModel.find({});
-  return tasks;
+  //return tasks;
 };
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
