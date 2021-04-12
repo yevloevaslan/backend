@@ -34,42 +34,42 @@ interface createTask {
 }
 
 const taskMainShema = Joi.object({
-  _id: Joi.string(),
-  title: Joi.string(),
-  description: Joi.string(),
-  type: Joi.string(),
-  level: Joi.string(),
-  points: Joi.string(),
+    _id: Joi.string(),
+    title: Joi.string(),
+    description: Joi.string(),
+    type: Joi.string(),
+    level: Joi.string(),
+    points: Joi.string(),
 });
 
 const taskUpdateInputSchema = Joi.object({
-  title: Joi.string(),
-  description: Joi.string(),
-  type: Joi.string(),
-  level: Joi.string(),
-  points: Joi.string(),
-  params: Joi.object(),
+    title: Joi.string(),
+    description: Joi.string(),
+    type: Joi.string(),
+    level: Joi.string(),
+    points: Joi.string(),
+    params: Joi.object(),
 });
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTask> => {
-  schemaErrorHandler(taskMainShema.validate(data));
+    schemaErrorHandler(taskMainShema.validate(data));
 
-  await TaskFactory(data);
-  return {
-    data: {
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      level: data.level,
-      points: data.points,
-      params: data.params,
-    },
-  };
+    await TaskFactory(data);
+    return {
+        data: {
+            title: data.title,
+            description: data.description,
+            type: data.type,
+            level: data.level,
+            points: data.points,
+            params: data.params,
+        },
+    };
 };
 
 const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
-  const task = await TaskFactory(null, _id);
-  task.checkTask(answer);
+    const task = await TaskFactory(null, _id);
+    task.checkTask(answer);
 };
 
 // const getTask = async (_id: string): Promise<getTask> => {
@@ -84,34 +84,34 @@ const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
 // };
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
-  return {
-    data: null,
-  };
+    return {
+        data: null,
+    };
 };
 
 const updateTask = async (data: taskDataInterface<TaskParams>): Promise<createTask> => {
-  schemaErrorHandler(taskUpdateInputSchema.validate(data));
+    schemaErrorHandler(taskUpdateInputSchema.validate(data));
 
-  await TaskFactory(data);
+    await TaskFactory(data);
 
-  return {
-    data: {
-      title: data.title,
-      description: data.description,
-      type: data.type,
-      level: data.level,
-      points: data.points,
-      params: data.params,
-    },
-  };
+    return {
+        data: {
+            title: data.title,
+            description: data.description,
+            type: data.type,
+            level: data.level,
+            points: data.points,
+            params: data.params,
+        },
+    };
 };
 
 
 export {
-  createTask,
-  checkTaskAnswer,
-  // getTask,
-  // getTasks,
-  deleteTask,
-  updateTask,
+    createTask,
+    checkTaskAnswer,
+    // getTask,
+    // getTasks,
+    deleteTask,
+    updateTask,
 };
