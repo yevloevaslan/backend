@@ -23,17 +23,14 @@ export const Task = new Schema({
     type: {
         type: String,
         required: true,
-        unique: true,
     },
     level: {
         type: String,
         required: true,
-        unique: true,
     },
     points: {
         type: String,
         required: true,
-        unique: true,
     },
 }, {
     timestamps: true,

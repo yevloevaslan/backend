@@ -5,15 +5,6 @@ import { TaskClassInterface } from '../interfaces/Task';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 
-const taskMainShema = Joi.object({
-  _id: Joi.string(),
-  title: Joi.string(),
-  description: Joi.string(),
-  type: Joi.string(),
-  level: Joi.string(),
-  points: Joi.string(),
-});
-
 const taskParamsShema = Joi.object({
   sound: Joi.string(),
   answers: [Joi.string()],
@@ -33,7 +24,6 @@ export default class TaskOneClass implements TaskClassInterface {
   }
 
   async createTask(data: taskDataInterface<TaskThree>): Promise<void> {
-    schemaErrorHandler(taskMainShema.validate(data));
     schemaErrorHandler(taskParamsShema.validate(data));
     this.task = await new TaskModel(data);
   }
@@ -48,10 +38,6 @@ export default class TaskOneClass implements TaskClassInterface {
       schemaErrorHandler(taskParamsShema.validate(data));
       this.task.params = data.params
     }
-  }
-
-  async deleteTask() {
-    console.log('');
   }
 
   get data(): ITask<TaskThree> {

@@ -2,7 +2,6 @@ import { ITaskModel, TaskModel } from '../../db/models/Task';
 import { ITask, TaskOne, TaskParams } from '../../entities/Task';
 import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
-<<<<<<< HEAD
 import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 
@@ -10,15 +9,6 @@ const taskParamsShema = Joi.object({
   photos: [Joi.string()],
   text: Joi.string(),
   answer: Joi.string(),
-});
-
-const taskMainShema = Joi.object({
-  _id: Joi.string(),
-  title: Joi.string(),
-  description: Joi.string(),
-  type: Joi.string(),
-  level: Joi.string(),
-  points: Joi.string(),
 });
 
 export default class TaskOneClass implements TaskClassInterface {
@@ -34,7 +24,6 @@ export default class TaskOneClass implements TaskClassInterface {
   }
 
   async createTask(data: taskDataInterface<TaskOne>): Promise<void> {
-    schemaErrorHandler(taskMainShema.validate(data));
     schemaErrorHandler(taskParamsShema.validate(data));
     this.task = await new TaskModel(data);
   }
@@ -51,10 +40,6 @@ export default class TaskOneClass implements TaskClassInterface {
     }
   }
 
-  async deleteTask() {
-    console.log('');
-  }
-
   get data(): ITask<TaskOne> {
     return {
       _id: this.task._id,
@@ -67,34 +52,4 @@ export default class TaskOneClass implements TaskClassInterface {
     };
   }
 }
-=======
 
-export default class TaskOneClass implements TaskClassInterface {
-    private task: ITaskModel<TaskParams>;
-
-    constructor(task?: ITaskModel<TaskParams>) {
-        this.task = task;
-    }
-
-    async createTask(data: taskDataInterface<TaskOne>): Promise<void> {
-        this.task = await new TaskModel(data);
-    }
-
-    checkAnswer(value: unknown): boolean {
-        if (value === this.task.params.answer) return true;
-        return false;
-    }
-
-    get data(): ITask<TaskOne> {
-        return {
-            _id: this.task._id,
-            title: this.task.title,
-            type: this.task.type,
-            description: this.task.description,
-            points: this.task.points,
-            level: this.task.level,
-            params: this.task.params as TaskOne,
-        };
-    }
-}
->>>>>>> 5b390ab475507ed82dcd6120d87eca97613d808a
