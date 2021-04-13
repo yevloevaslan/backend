@@ -7,7 +7,7 @@ export interface ITaskModel<T> extends ITask<T>, Document {
     description: string,
     type: string,
     level: string,
-    points: string,
+    points: number,
     params: T,
 }
 
@@ -29,7 +29,7 @@ export const Task = new Schema({
         required: true,
     },
     points: {
-        type: String,
+        type: Number,
         required: true,
     },
 }, {

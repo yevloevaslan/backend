@@ -1,11 +1,12 @@
 import { taskDataInterface } from './interfaces';
-import { TaskFactory } from './classes';
+import { TaskFactory, User } from './classes';
 import { TaskParams } from '../entities/Task';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import Joi from 'joi';
 import { ITask } from '../entities/Task';
 import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
+import { IUser } from '../entities/User.entity';
 
 interface getTasksResult {
     data: {
@@ -15,7 +16,7 @@ interface getTasksResult {
             description: string,
             type: string,
             level: string,
-            points: string,
+            points: number,
         }>,
     },
     meta: {
@@ -29,6 +30,12 @@ interface getTaskResult {
     },
 }
 
+interface checkTaskResult {
+  data: {
+      user: IUser['score'];
+  },
+}
+
 interface voidResult {
     data: null,
 }
@@ -39,7 +46,7 @@ interface createTask {
         description: string,
         type: string,
         level: string,
-        points: string,
+        points: number,
     }
 }
 
@@ -49,7 +56,7 @@ const taskMainSchema = Joi.object({
     description: Joi.string(),
     type: Joi.string(),
     level: Joi.string(),
-    points: Joi.string(),
+    points: Joi.number(),
 });
 
 const taskUpdateInputSchema = Joi.object({
@@ -57,7 +64,7 @@ const taskUpdateInputSchema = Joi.object({
     description: Joi.string(),
     type: Joi.string(),
     level: Joi.string(),
-    points: Joi.string(),
+    points: Joi.number(),
     params: Joi.object(),
 });
 
@@ -65,7 +72,7 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
     schemaErrorHandler(taskMainSchema.validate(data));
 
     await TaskFactory(data);
-    
+
     return {
         data: {
             title: data.title,
@@ -77,9 +84,20 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
     };
 };
 
-const checkTaskAnswer = async (_id: string, answer: string): Promise<void> => {
+const checkTaskAnswer = async (query: {_id: string, answerTrue}, _id: string, answer: string, data: taskDataInterface<TaskParams>): Promise<checkTaskResult> => {
+    const { answerTrue } = query;
+    const user = await User(query);
     const task = await TaskFactory(null, _id);
     task.checkTask(answer);
+    const point = data.points;
+
+    if ( answerTrue === answer) {
+        return {
+            data: {
+                user: user.data.score + point,
+            },
+        };
+    }
 };
 
 const getTask = async (_id: string): Promise<getTaskResult> => {

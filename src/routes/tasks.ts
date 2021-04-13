@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import { taskDataInterface } from '../controllers/interfaces';
+//import { taskDataInterface } from '../controllers/interfaces';
 const router = Router();
 // import { getTask, getTasks, createTask, checkTaskAnswer, updateTask, deleteTask } from '../controllers/TaskController';
-import { TaskParams } from '../entities/Task';
+//import { TaskParams } from '../entities/Task';
 
 // router.get('/tasks', getTasks);
 

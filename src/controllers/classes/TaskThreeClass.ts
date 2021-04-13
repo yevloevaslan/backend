@@ -16,7 +16,7 @@ export default class TaskOneClass implements TaskClassInterface {
     private task: ITaskModel<TaskParams>;
 
     constructor(task?: ITaskModel<TaskParams>) {
-        this.task = task;
+        this.task = task ;
     }
 
     checkTask(value: unknown): boolean {

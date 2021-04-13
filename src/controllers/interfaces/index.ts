@@ -11,6 +11,6 @@ export interface taskDataInterface<T> {
   description: string,
   type: string,
   level: string,
-  points: string,
+  points: number,
   params: T,
 }
