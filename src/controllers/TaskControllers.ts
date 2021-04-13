@@ -31,9 +31,9 @@ interface getTaskResult {
 }
 
 interface checkTaskResult {
-  data: {
-      user: IUser['score'];
-  },
+    data: {
+        user: IUser['score'];
+    },
 }
 
 interface voidResult {
@@ -84,17 +84,13 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
     };
 };
 
-const checkTaskAnswer = async (query: {_id: string, answerTrue}, _id: string, answer: string, data: taskDataInterface<TaskParams>): Promise<checkTaskResult> => {
-    const { answerTrue } = query;
+const checkTaskAnswer = async (query: { _id: string }, _id: string, answer: string): Promise<checkTaskResult> => {
     const user = await User(query);
     const task = await TaskFactory(null, _id);
-    task.checkTask(answer);
-    const point = data.points;
-
-    if ( answerTrue === answer) {
+    if (task.checkTask(answer) === true) {
         return {
             data: {
-                user: user.data.score + point,
+                user: user.data.score + task.data().points,
             },
         };
     }
@@ -109,10 +105,10 @@ const getTask = async (_id: string): Promise<getTaskResult> => {
     };
 };
 
-const getTasks = async (query: {type?: string}, options: {limit: number, page: number}): Promise<getTasksResult> => {
-    const {skip, limit} = paginationParams(options.page, options.limit);
+const getTasks = async (query: { type?: string }, options: { limit: number, page: number }): Promise<getTasksResult> => {
+    const { skip, limit } = paginationParams(options.page, options.limit);
     const [tasks, count] = await Promise.all([
-        TaskModel.find(query, {params: 0}).skip(skip).limit(limit),
+        TaskModel.find(query, { params: 0 }).skip(skip).limit(limit),
         TaskModel.countDocuments(query),
     ]);
     return {
@@ -126,7 +122,7 @@ const getTasks = async (query: {type?: string}, options: {limit: number, page: n
 };
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
-    await TaskModel.deleteOne({_id});
+    await TaskModel.deleteOne({ _id });
     return {
         data: null,
     };
