@@ -8,6 +8,7 @@ import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
 import { userUpdateInterface } from './interfaces';
+
 interface confirmLoginResult {
     data: {
         token: string,
@@ -87,7 +88,7 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
 
 const updateUserData = async (user: UserClass, data: userUpdateInterface): Promise<voidResult> => {
     schemaErrorHandler(userUpdateInputSchema.validate(data));
-    
+
     await user.updateUserData(data);
     return {
         data: null,
@@ -124,7 +125,6 @@ const usersCount = async (): Promise<usersCountResult> => {
         },
     };
 };
-
 
 export {
     login,

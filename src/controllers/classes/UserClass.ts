@@ -24,6 +24,11 @@ export default class UserClass {
         await this.user.save();
     }
 
+    async upUserScore(score:number): Promise<void> {
+        this.user.score = this.user.score + score;
+        await this.user.save();
+    }
+
     get _id(): string {
         return this.user._id;
     }

@@ -27,6 +27,7 @@ const decodeToken = async (token: string): Promise<DataToken> => {
         });
     });
 };
+
 export {
     createToken,
     decodeToken,

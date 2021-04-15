@@ -16,4 +16,4 @@ export function checkTokenMiddleware(type?: 'user'|'admin') {
             next(unauthorized('Auth error'));
         }
     };
-} 
+}
