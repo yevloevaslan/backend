@@ -125,6 +125,7 @@ const getTasks = async (query: { type?: string }, options: { limit?: unknown, pa
         TaskModel.find(query, { params: 0 }).skip(skip).limit(limit),
         TaskModel.countDocuments(query),
     ]);
+
     return {
         data: {
             tasks,
