@@ -117,7 +117,7 @@ const getTask = async (_id: string): Promise<getTaskResult> => {
     };
 };
 
-const getTasks = async (query: { type?: string }, options: { limit: number, page: number }): Promise<getTasksResult> => {
+const getTasks = async (query: { type?: string }, options: { limit?: unknown, page?: unknown }): Promise<getTasksResult> => {
     const { skip, limit } = paginationParams(options.page, options.limit);
     const [tasks, count] = await Promise.all([
         TaskModel.find(query, { params: 0 }).skip(skip).limit(limit),

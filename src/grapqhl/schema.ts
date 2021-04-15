@@ -13,7 +13,8 @@ export const schema = buildSchema(`
     }
 
     type Mutation {
-        login(login: String!, password: String!): TokenResult
+        login(login: String!, password: String!): TokenResult,
+        updateUser(firstName: String): Void
     }
 
     type TokenResult {

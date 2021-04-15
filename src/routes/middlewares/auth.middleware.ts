@@ -12,7 +12,8 @@ export function checkTokenMiddleware(type?: 'user'|'admin') {
             req.user = user;
             next();
         } catch (err) {
-            throw unauthorized(err);
+            next(unauthorized('Auth error'));
+            // throw unauthorized(err);
         }
     };
 }
