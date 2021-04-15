@@ -4,13 +4,5 @@ export interface userUpdateInterface {
     birthday: string,
     middleName: string,
     email: string,
-}
-
-export interface taskDataInterface<T> {
-  title: string,
-  description: string,
-  type: string,
-  level: string,
-  points: number,
-  params: T,
+    sex: 'f' | 'm',
 }

@@ -24,6 +24,13 @@ export const schema = buildSchema(`
     type User {
         _id: ID,
         phone: String,
+        firstName: String,
+        lastName: String,
+        middleName: String,
+        score: Int,
+        birthday: String,
+        sex: String,
+        email: String,
         createdAt: String,
         updatedAt: String
     }

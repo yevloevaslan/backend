@@ -119,6 +119,7 @@ describe('User routes tests', () => {
                 middleName: 'TestMiddleName',
                 birthday: '2001-01-01T00:00:00.000Z',
                 email: 'email@mail.ru',
+                sex: 'f',
             })
             .expect(200);
         const userModel = await UserModel.find({email: 'email@mail.ru'});
@@ -128,5 +129,6 @@ describe('User routes tests', () => {
         expect(userData.middleName).toEqual('TestMiddleName');
         expect(userData.birthday).toEqual(new Date('2001-01-01T00:00:00.000Z'));
         expect(userData.email).toEqual('email@mail.ru');
+        expect(userData.sex).toEqual('f');
     });
 });

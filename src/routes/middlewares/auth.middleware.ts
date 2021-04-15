@@ -12,8 +12,8 @@ export function checkTokenMiddleware(type?: 'user'|'admin') {
             req.user = user;
             next();
         } catch (err) {
+            if (process.env.NODE_ENV !== 'production') console.error(err);
             next(unauthorized('Auth error'));
-            // throw unauthorized(err);
         }
     };
 }

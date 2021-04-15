@@ -4,7 +4,7 @@ import {MongoMemoryServer} from 'mongodb-memory-server';
 import {AdminModel, ConfirmCodeModel, UserModel} from '../db/models';
 
 let mongoServer;
-const opts = {useNewUrlParser: true};
+const opts = {useNewUrlParser: true, useUnifiedTopology: true};
 
 export const deleteAll = async () => {
     await UserModel.deleteMany();
