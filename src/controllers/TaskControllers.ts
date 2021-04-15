@@ -110,9 +110,11 @@ const checkTaskAnswer = async (user:UserClass, _id: string, answer: string): Pro
 
 const getTask = async (_id: string): Promise<getTaskResult> => {
     const task = await TaskFactory(null, _id);
+    const data = task.data();
+    delete data.params.answer;
     return {
         data: {
-            task: task.data(),
+            task: data,
         },
     };
 };
