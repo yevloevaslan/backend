@@ -1,35 +1,30 @@
 import {Router} from 'express';
-//import { taskDataInterface } from '../controllers/interfaces';
 const router = Router();
-import { getTask, /*getTasks,*/ checkTaskAnswer } from '../controllers/TaskControllers';
-import { TaskRequestInterface } from './interfaces/TaskRequestInterface';
+import { getTask, checkTaskAnswer, getTasks } from '../controllers/TaskControllers';
 import { UserRequestInterface } from './interfaces/UserRequest.interface';
 import { checkTokenMiddleware } from './middlewares/auth.middleware';
-//import { TaskParams } from '../entities/Task';
 
-router.get('/tasks', async (req: TaskRequestInterface /*res, next*/) => {
-    delete req.task.data().params.answer;
+router.get('/', checkTokenMiddleware('user'), async (req, res, next) => {
     try {
-        // const result = await getTasks([req.task.data()], null);
-        // res.send(result);
-    } catch (err) {
-        //next(err);
-    }
-});
-
-router.get('/tasks/:id', async (req: TaskRequestInterface, res, next) => {
-    delete req.task.data().params.answer;
-    try {
-        const result = await getTask(req.task.data()._id);
+        const result = await getTasks(req.query, req.query);
         res.send(result);
     } catch (err) {
         next(err);
     }
 });
 
-router.get('/tasks/:id/check', checkTokenMiddleware('user'), async (req: UserRequestInterface & TaskRequestInterface, res, next) => {
+router.get('/:id', checkTokenMiddleware('user'), async (req, res, next) => {
     try {
-        const result = await checkTaskAnswer(req.user, req.task.data()._id, req.task.data().params.answer);
+        const result = await getTask(req.params.id);
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.post('/:id/answer', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
+    try {
+        const result = await checkTaskAnswer(req.user, req.params.id, req.body.answer);
         res.send(result);
     } catch (err) {
         next(err);
