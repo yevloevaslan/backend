@@ -18,6 +18,10 @@ export default class TaskOneClass implements TaskClassInterface {
         this.task = task;
     }
 
+    getAnswer(): string {
+        return this.task.params.answer;
+    }
+
     checkTask(value: unknown): boolean {
         if (value === this.task.params.answer) return true;
         return false;
