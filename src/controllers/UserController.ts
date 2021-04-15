@@ -8,6 +8,7 @@ import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
 import { userUpdateInterface } from './interfaces';
+
 interface confirmLoginResult {
     data: {
         token: string,
@@ -122,7 +123,6 @@ const usersCount = async (): Promise<usersCountResult> => {
         },
     };
 };
-
 
 export {
     login,

@@ -1,12 +1,12 @@
 import { taskDataInterface } from './interfaces';
-import { TaskFactory, User } from './classes';
+import { TaskFactory } from './classes';
 import { TaskParams } from '../entities/Task';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import Joi from 'joi';
 import { ITask } from '../entities/Task';
 import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
-import { IUser } from '../entities/User.entity';
+import UserClass from './classes/UserClass';
 
 interface getTasksResult {
     data: {
@@ -32,7 +32,8 @@ interface getTaskResult {
 
 interface checkTaskResult {
     data: {
-        user: IUser['score'];
+        trueResult: boolean,
+        answer: string,
     },
 }
 
@@ -40,7 +41,7 @@ interface voidResult {
     data: null,
 }
 
-interface createTask {
+interface creatTask {
     data: {
         title: string,
         description: string,
@@ -68,7 +69,12 @@ const taskUpdateInputSchema = Joi.object({
     params: Joi.object(),
 });
 
-const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTask> => {
+const test = Joi.object({
+    _id: Joi.string().required(),
+    answer: Joi.string().required(),
+});
+
+const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     schemaErrorHandler(taskMainSchema.validate(data));
 
     await TaskFactory(data);
@@ -84,16 +90,22 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<createTa
     };
 };
 
-const checkTaskAnswer = async (query: { _id: string }, _id: string, answer: string): Promise<checkTaskResult> => {
-    const user = await User(query);
-    const task = await TaskFactory(null, _id);
-    if (task.checkTask(answer) === true) {
-        return {
-            data: {
-                user: user.data.score + task.data().points,
-            },
-        };
+const checkTaskAnswer = async (user:UserClass, data: {_id: string, answer: string}): Promise<checkTaskResult> => {
+    schemaErrorHandler(test.validate(data));
+
+    const task = await TaskFactory(null, data._id);
+    let trueResult = false;
+
+    if (task.checkTask(data.answer) === true) {
+        await user.upUserScore(task.data().points);
+        trueResult = true;
     }
+    return {
+        data: {
+            trueResult,
+            answer: task.getAnswer(),
+        },
+    };
 };
 
 const getTask = async (_id: string): Promise<getTaskResult> => {
@@ -128,7 +140,7 @@ const deleteTask = async (_id: string): Promise<voidResult> => {
     };
 };
 
-const updateTask = async (id: string, data: taskDataInterface<TaskParams>): Promise<createTask> => {
+const updateTask = async (id: string, data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     schemaErrorHandler(taskUpdateInputSchema.validate(data));
 
     const task = await TaskFactory(null, id);

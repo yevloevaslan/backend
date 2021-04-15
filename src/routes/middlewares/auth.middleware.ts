@@ -15,4 +15,4 @@ export function checkTokenMiddleware(type?: 'user'|'admin') {
             throw unauthorized(err);
         }
     };
-} 
+}
