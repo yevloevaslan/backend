@@ -90,13 +90,13 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
     };
 };
 
-const checkTaskAnswer = async (user:UserClass, data: {_id: string, answer: string}): Promise<checkTaskResult> => {
-    schemaErrorHandler(test.validate(data));
+const checkTaskAnswer = async (user:UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
+    schemaErrorHandler(test.validate(_id));
 
-    const task = await TaskFactory(null, data._id);
+    const task = await TaskFactory(null, _id);
     let trueResult = false;
 
-    if (task.checkTask(data.answer) === true) {
+    if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
         trueResult = true;
     }
