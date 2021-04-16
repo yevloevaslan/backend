@@ -1,10 +1,8 @@
-import { Response } from 'express';
 import { buildSchema } from 'graphql';
-import { login } from '../controllers/AdminController';
 import { getUsers, usersCount } from '../controllers/UserController';
-import { IUser } from '../entities';
+import { UpdateUserData, User } from '../types';
 
-type UserResolveResult = Array<IUser>;
+type UserResolveResult = Array<User>;
 
 export const schema = buildSchema(`
     type Query {
@@ -13,12 +11,17 @@ export const schema = buildSchema(`
     }
 
     type Mutation {
-        login(login: String!, password: String!): TokenResult,
-        updateUser(firstName: String): Void
+        updateUser(data: UpdateUserData): Boolean
     }
 
-    type TokenResult {
-        token: String
+    input UpdateUserData {
+        phone: String,
+        firstName: String,
+        lastName: String,
+        middleName: String,
+        birthday: String,
+        sex: String,
+        email: String,
     }
 
     type User {
@@ -37,13 +40,6 @@ export const schema = buildSchema(`
 `);
 
 export const root = {
-    login: async (args: {login: string, password: string}, context: {res: Response}): Promise<{token: string}> => {
-        const {data} = await login({login: args.login, password: args.password});
-        context.res.cookie('x-access-token', data.token);
-        return {
-            token: data.token,
-        };
-    },
     usersCount: async (): Promise<number> => {
         const {data: {count}} = await usersCount();
         return count;
@@ -52,5 +48,8 @@ export const root = {
         const {data: {users}} = await getUsers({_id: args._id}, {page: args.page, limit: args.limit});
         return users;
     },
-
+    updateUser: async (args: {data: UpdateUserData}): Promise<boolean> => {
+        console.log(args.data);
+        return true;
+    },
 };
