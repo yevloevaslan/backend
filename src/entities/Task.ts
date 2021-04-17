@@ -32,8 +32,8 @@ export interface TaskFour {
 }
 
 export interface TaskFive {
-    text: string,
     answers: [string],
+    text: string,
     answer?: string,
 }
 

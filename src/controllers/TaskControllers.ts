@@ -8,20 +8,24 @@ import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
 
-interface getTasksResult {
+export interface TaskResultData {
+    _id: string,
+    title: string,
+    description: string,
+    type: string,
+    level: string,
+    points: number,
+    params: TaskParams,
+}
+
+export interface TaskResultMeta {
+    count: number,
+}
+export interface getTasksResult {
     data: {
-        tasks: Array<{
-            _id: string,
-            title: string,
-            description: string,
-            type: string,
-            level: string,
-            points: number,
-        }>,
+        tasks: Array<TaskResultData>,
     },
-    meta: {
-        count: number,
-    }
+    meta: TaskResultMeta
 }
 
 interface getTaskResult {
@@ -51,19 +55,25 @@ interface creatTask {
     }
 }
 
+export interface updateTaskData {
+    title?: string,
+    description?: string,
+    level?: string,
+    points?: number,
+    params?: TaskParams,
+}
+
 const taskMainSchema = Joi.object({
-    _id: Joi.string(),
-    title: Joi.string(),
+    title: Joi.string().required(),
     description: Joi.string(),
-    type: Joi.string(),
-    level: Joi.string(),
-    points: Joi.number(),
-});
+    type: Joi.string().min(1).max(5).required(),
+    level: Joi.string().min(0).max(2).required(),
+    points: Joi.number().required(),
+}).unknown();
 
 const taskUpdateInputSchema = Joi.object({
     title: Joi.string(),
     description: Joi.string(),
-    type: Joi.string(),
     level: Joi.string(),
     points: Joi.number(),
     params: Joi.object(),
@@ -90,7 +100,7 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
     };
 };
 
-const checkTaskAnswer = async (user:UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
+const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
     schemaErrorHandler(test.validate(_id));
 
     const task = await TaskFactory(null, _id);
@@ -119,11 +129,14 @@ const getTask = async (_id: string): Promise<getTaskResult> => {
     };
 };
 
-const getTasks = async (query: { type?: string }, options: { limit?: unknown, page?: unknown }): Promise<getTasksResult> => {
+const getTasks = async (query: { type?: string, _id?: string }, options: { limit?: unknown, page?: unknown }): Promise<getTasksResult> => {
     const { skip, limit } = paginationParams(options.page, options.limit);
+    const taskQuery: {[key: string]: string} = {};
+    if (query.type) taskQuery.type = query.type;
+    if (query._id) taskQuery._id = query._id;
     const [tasks, count] = await Promise.all([
-        TaskModel.find(query, { params: 0 }).skip(skip).limit(limit),
-        TaskModel.countDocuments(query),
+        TaskModel.find(taskQuery).skip(skip).limit(limit).lean(),
+        TaskModel.countDocuments(taskQuery),
     ]);
 
     return {
@@ -143,7 +156,7 @@ const deleteTask = async (_id: string): Promise<voidResult> => {
     };
 };
 
-const updateTask = async (id: string, data: taskDataInterface<TaskParams>): Promise<creatTask> => {
+const updateTask = async (id: string, data: updateTaskData): Promise<creatTask> => {
     schemaErrorHandler(taskUpdateInputSchema.validate(data));
 
     const task = await TaskFactory(null, id);

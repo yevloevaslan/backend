@@ -7,12 +7,12 @@ import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 
 const taskParamsSchema = Joi.object({
-    text: Joi.string(),
-    answers: [Joi.string()],
-    answer: Joi.string(),
-});
+    text: Joi.string().required(),
+    answers: Joi.array().items(Joi.string()).required(),
+    answer: Joi.string().required(),
+}).unknown();
 
-export default class TaskOneClass implements TaskClassInterface {
+export default class TaskTwoClass implements TaskClassInterface {
     private task: ITaskModel<TaskParams>;
 
     constructor(task?: ITaskModel<TaskParams>) {
@@ -33,20 +33,23 @@ export default class TaskOneClass implements TaskClassInterface {
             console.error('Conflict in creating task two', JSON.stringify({task: this.task, data}));
             throw conflict('Задание уже существует.');
         }
-        schemaErrorHandler(taskParamsSchema.validate(data));
+        schemaErrorHandler(taskParamsSchema.validate(data.params));
+        if (!data.params.answers.includes(data.params.answer)) throw conflict('Среди вариантов ответа нет верного ответа');
+
         this.task = await new TaskModel(data).save();
     }
 
     async updateTask(data: taskDataInterface<TaskTwo>): Promise<void> {
         if (data.title) this.task.title = data.title;
         if (data.description) this.task.description = data.description;
-        if (data.type) this.task.type = data.type;
+        
         if (data.level) this.task.level = data.level;
         if (data.points) this.task.points = data.points;
         if (data.params) {
             schemaErrorHandler(taskParamsSchema.validate(data));
             this.task.params = data.params;
         }
+        await this.task.save();
     }
 
     data(): ITask<TaskTwo> {

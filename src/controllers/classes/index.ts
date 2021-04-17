@@ -2,16 +2,16 @@ import { badRequest, notFound } from 'boom';
 import { AdminModel, ConfirmCodeModel, UserModel } from '../../db/models';
 import AdminClass from './AdminClass';
 import ConfirmCodeClass from './ConfirmCodeClass';
-import TaskOneClass from './TaskOneClass';
-import TaskTwoClass from './TaskOneClass';
-import TaskThreeClass from './TaskOneClass';
-import TaskFourClass from './TaskOneClass';
-import TaskFiveClass from './TaskOneClass';
 import { ITaskModel, TaskModel } from '../../db/models/Task';
 import { TaskParams } from '../../entities/Task';
 import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
 import UserClass from './UserClass';
+import TaskOneClass from './TaskOneClass';
+import TaskTwoClass from './TaskTwoClass';
+import TaskThreeClass from './TaskThreeClass';
+import TaskFourClass from './TaskFourClass';
+import TaskFiveClass from './TaskFiveClass';
 
 export const User = async (data: { phone?: string, _id?: string }): Promise<UserClass> => {
     const query = data._id ? { _id: data._id } : { phone: data.phone };
@@ -64,7 +64,7 @@ export const TaskFactory = async (data?: taskDataInterface<TaskParams>, _id?: st
 
 const taskTypeSwitch = (type, task?: ITaskModel<TaskParams>) => {
     let taskClass: TaskClassInterface;
-    switch (type) {
+    switch (String(type)) {
     case '1': {
         taskClass = task ? new TaskOneClass(task) : new TaskOneClass();
         break;

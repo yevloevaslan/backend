@@ -7,7 +7,8 @@ import UserClass from './classes/UserClass';
 import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
-import { userUpdateInterface } from './interfaces';
+import { badRequest } from 'boom';
+import { UpdateUserData } from '../types';
 
 interface confirmLoginResult {
     data: {
@@ -86,9 +87,12 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
     };
 };
 
-const updateUserData = async (user: UserClass, data: userUpdateInterface): Promise<voidResult> => {
+const updateUserData = async (user?: UserClass, data?: UpdateUserData, userId?: string): Promise<voidResult> => {
     schemaErrorHandler(userUpdateInputSchema.validate(data));
-
+    if (!user) {
+        if (!userId) throw badRequest('Enter user id');
+        user = await User({_id: userId});
+    }
     await user.updateUserData(data);
     return {
         data: null,
