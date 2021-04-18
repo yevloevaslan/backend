@@ -1,5 +1,5 @@
 import { buildSchema } from 'graphql';
-import { createTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
+import { createTask, deleteTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
 import { getUsers, updateUserData, usersCount } from '../controllers/UserController';
 import { TaskParams } from '../entities/Task';
 import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData } from '../types';
@@ -17,6 +17,7 @@ export const schema = buildSchema(`
         updateUser(_id: String, data: UpdateUserData!): Boolean,
         createTask(taskData: TaskCreateData!): Boolean,
         updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
+        deleteTask(_id: String!): Boolean
     }
 
     input TasksQuery {
@@ -151,6 +152,10 @@ export const root = {
             title: taskData.title,
             params: taskData.params as TaskParams,
         });
+        return true;
+    },
+    deleteTask: async (args: {_id: string}): Promise<boolean> => {
+        await deleteTask(args._id);
         return true;
     },
 };

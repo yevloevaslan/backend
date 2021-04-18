@@ -1,16 +1,6 @@
 import { Schema, Document, model } from 'mongoose';
 import { ITask, TaskParams } from '../../entities/Task';
 
-export interface ITaskModel<T> extends ITask<T>, Document {
-    _id: string
-    title: string,
-    description: string,
-    type: string,
-    level: string,
-    points: number,
-    params: T,
-}
-
 export const Task = new Schema({
     title: {
         type: String,
@@ -37,4 +27,4 @@ export const Task = new Schema({
     strict: false,
 });
 
-export const TaskModel = model<ITaskModel<TaskParams>>('task', Task);
+export const TaskModel = model<ITask<TaskParams>&Document>('task', Task);

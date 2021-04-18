@@ -1,0 +1,8 @@
+image: docker/compose:debian-1.28.0-rc1
+
+variables:
+  IMAGE_TAG: ${CI_REGISTRY_IMAGE}:$CI_PIPELINE_IID
+
+stages:
+  - deploy
+

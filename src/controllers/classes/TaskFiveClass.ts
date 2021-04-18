@@ -1,10 +1,11 @@
-import { ITaskModel, TaskModel } from '../../db/models/Task';
+import { TaskModel } from '../../db/models/Task';
 import { ITask, TaskFive, TaskParams } from '../../entities/Task';
 import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
+import { Document } from 'mongoose';
 
 const taskParamsSchema = Joi.object({
     text: Joi.string().required(),
@@ -13,9 +14,9 @@ const taskParamsSchema = Joi.object({
 }).unknown();
 
 export default class TaskFiveClass implements TaskClassInterface {
-    private task: ITaskModel<TaskParams>;
+    private task: ITask<TaskParams>&Document;
 
-    constructor(task?: ITaskModel<TaskParams>) {
+    constructor(task?: ITask<TaskParams>&Document) {
         this.task = task;
     }
 

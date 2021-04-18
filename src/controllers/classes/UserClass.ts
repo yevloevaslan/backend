@@ -1,11 +1,11 @@
-import { IUserModel } from '../../db/models/User';
+import { Document } from 'mongoose';
 import { IUser } from '../../entities/User.entity';
 import { userUpdateInterface } from '../interfaces';
 
 export default class UserClass {
-    private user: IUserModel;
+    private user: IUser&Document;
 
-    constructor(userData: IUserModel) {
+    constructor(userData: IUser&Document) {
         this.user = userData;
     }
 

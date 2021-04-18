@@ -1,19 +1,19 @@
 import {Schema, model, Document} from 'mongoose';
 import {IUser} from '../../entities/User.entity';
 
-export interface IUserModel extends IUser, Document {
-    _id: string,
-    phone: string,
-    firstIn: boolean,
-    score: number,
-    birthday: string,
-    firstName: string,
-    lastName: string,
-    middleName: string,
-    email: string,
-    createdAt: string,
-    updatedAt: string,
-}
+// export interface IUserModel extends IUser, Document {
+//     _id: string,
+//     phone: string,
+//     firstIn: boolean,
+//     score: number,
+//     birthday: string,
+//     firstName: string,
+//     lastName: string,
+//     middleName: string,
+//     email: string,
+//     createdAt: string,
+//     updatedAt: string,
+// }
 
 const User = new Schema({
     phone: {
@@ -55,4 +55,4 @@ const User = new Schema({
     timestamps: true,
 });
 
-export const UserModel = model<IUserModel>('user', User);
+export const UserModel = model<IUser&Document>('user', User);

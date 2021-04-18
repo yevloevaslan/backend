@@ -2,8 +2,8 @@ import { badRequest, notFound } from 'boom';
 import { AdminModel, ConfirmCodeModel, UserModel } from '../../db/models';
 import AdminClass from './AdminClass';
 import ConfirmCodeClass from './ConfirmCodeClass';
-import { ITaskModel, TaskModel } from '../../db/models/Task';
-import { TaskParams } from '../../entities/Task';
+import { TaskModel } from '../../db/models/Task';
+import { ITask, TaskParams } from '../../entities/Task';
 import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
 import UserClass from './UserClass';
@@ -12,6 +12,7 @@ import TaskTwoClass from './TaskTwoClass';
 import TaskThreeClass from './TaskThreeClass';
 import TaskFourClass from './TaskFourClass';
 import TaskFiveClass from './TaskFiveClass';
+import { Document } from 'mongoose';
 
 export const User = async (data: { phone?: string, _id?: string }): Promise<UserClass> => {
     const query = data._id ? { _id: data._id } : { phone: data.phone };
@@ -52,7 +53,7 @@ export const Admin = async (query: { _id?: string, login?: string }): Promise<Ad
 
 export const TaskFactory = async (data?: taskDataInterface<TaskParams>, _id?: string): Promise<TaskClassInterface> => {
     if (!data && !_id) throw badRequest('Введите данные');
-    let task: ITaskModel<TaskParams>;
+    let task: ITask<TaskParams>&Document;
     if (_id) {
         task = await TaskModel.findById(_id);
         if (!task) throw notFound('Задание не найдено');
@@ -62,7 +63,7 @@ export const TaskFactory = async (data?: taskDataInterface<TaskParams>, _id?: st
     return taskClass;
 };
 
-const taskTypeSwitch = (type, task?: ITaskModel<TaskParams>) => {
+const taskTypeSwitch = (type, task?: ITask<TaskParams>&Document) => {
     let taskClass: TaskClassInterface;
     switch (String(type)) {
     case '1': {

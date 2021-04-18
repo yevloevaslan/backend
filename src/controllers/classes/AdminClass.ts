@@ -1,9 +1,10 @@
-import { IAdminModel } from '../../db/models/AdminModel';
+import { Document } from 'mongoose';
 import { IAdmin } from '../../entities';
 
 export default class AdminClass {
-    private admin: IAdminModel;
-    constructor(data: IAdminModel) {
+    private admin: Document&IAdmin;
+    
+    constructor(data: Document&IAdmin) {
         this.admin = data;
     }
 
