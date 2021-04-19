@@ -15,3 +15,13 @@ export interface taskDataInterface<T> {
   points: number,
   params: T,
 }
+
+export interface wordDataInterface {
+    rus: string,
+    ing: string,
+}
+
+export interface wordInterface {
+    rus?: string,
+    ing?: string,
+}
