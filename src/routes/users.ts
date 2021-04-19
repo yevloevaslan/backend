@@ -1,6 +1,6 @@
 import {Router} from 'express';
 const router = Router();
-import {login, confirmLogin} from '../controllers/UserController';
+import {login, confirmLogin, updateUserData} from '../controllers/UserController';
 import { UserRequestInterface } from './interfaces/UserRequest.interface';
 import {checkTokenMiddleware} from './middlewares/auth.middleware';
 
@@ -17,6 +17,15 @@ router.post('/confirm', async (req, res, next) => {
     try {
         const result = await confirmLogin(req.body);
         res.cookie('x-access-token', result.data.token);
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.put('/info', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
+    try {
+        const result = await updateUserData(req.user, req.body);
         res.send(result);
     } catch (err) {
         next(err);

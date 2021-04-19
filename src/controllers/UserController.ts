@@ -7,6 +7,9 @@ import UserClass from './classes/UserClass';
 import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
+import { badRequest } from 'boom';
+import { userUpdateInterface } from './interfaces';
+
 interface confirmLoginResult {
     data: {
         token: string,
@@ -20,11 +23,21 @@ interface getUsersResult {
     },
 }
 
+interface usersCountResult {
+    data: {
+        count: number,
+    },
+}
+
 interface loginResult {
     data: {
         _id: string,
         updatedAt: string,
     }
+}
+
+interface voidResult {
+    data: null,
 }
 
 const loginInputSchema = Joi.object({
@@ -34,6 +47,15 @@ const loginInputSchema = Joi.object({
 const confirmInputSchema = Joi.object({
     _id: Joi.string().required(),
     code: Joi.string().required(),
+});
+
+const userUpdateInputSchema = Joi.object({
+    firstName: Joi.string(),
+    lastName: Joi.string(),
+    middleName: Joi.string(),
+    birthday: Joi.string().pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
+    email: Joi.string().email(),
+    sex: Joi.string().valid('f', 'm'),
 });
 
 const login = async (data: {phone?: unknown}): Promise<loginResult> => {
@@ -55,11 +77,25 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
     await confirmCode.checkCode(data.code);
     const user = await User({phone: confirmCode.getPhone});
     const token = await createToken({_id: user._id, type: 'user'});
+    const userData = user.data;
+    if (user.data.firstIn) await user.endFirstLogin();
     return {
         data: {
             token,
-            user: user.data,
+            user: userData,
         },
+    };
+};
+
+const updateUserData = async (user?: UserClass, data?: userUpdateInterface, userId?: string): Promise<voidResult> => {
+    schemaErrorHandler(userUpdateInputSchema.validate(data));
+    if (!user) {
+        if (!userId) throw badRequest('Enter user id');
+        user = await User({_id: userId});
+    }
+    await user.updateUserData(data);
+    return {
+        data: null,
     };
 };
 
@@ -78,13 +114,14 @@ const getUsers = async ({_id}: {_id: string}, options: {page?: number, limit?: n
             users: users.map(u => {
                 u.createdAt = moment(u.createdAt).toISOString();
                 u.updatedAt = moment(u.updatedAt).toISOString();
+                if (!u.score) u.score = 0;
                 return u;
             }),
         },
     };
 };
 
-const usersCount = async (): Promise<{data: {count: number}}> => {
+const usersCount = async (): Promise<usersCountResult> => {
     const count = await UserModel.countDocuments();
     return {
         data: {
@@ -93,11 +130,11 @@ const usersCount = async (): Promise<{data: {count: number}}> => {
     };
 };
 
-
 export {
     login,
     confirmLogin,
     getUser,
     getUsers,
     usersCount,
+    updateUserData,
 };

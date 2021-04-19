@@ -1,7 +1,5 @@
 import express from 'express';
 import {graphqlHTTP} from 'express-graphql';
-// import {GraphQLObjectType, GraphQLSchema} from 'graphql';
-// import {UserCountQuery, UserQuery} from './grapqhl/queries.ts/users';
 const adminApp = express();
 import db from '../db';
 db();
@@ -10,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import { checkTokenMiddleware } from '../routes/middlewares/auth.middleware';
 import { apiErrorHandler } from '../libs/errorHandler';
 import {login} from '../controllers/AdminController';
+import Boom from 'boom';
+const NODE_ENV = process.env.NODE_ENV;
 
 adminApp.use(express.json({ limit: '1mb' }));
 adminApp.use(cookieParser());
@@ -31,6 +31,11 @@ adminApp.use('/api/admin', checkTokenMiddleware('admin'), graphqlHTTP((request, 
     schema,
     rootValue: root,
     graphiql: true,
+    customFormatErrorFn: (err) => {
+        if (NODE_ENV !== 'production') console.error(err);
+        const originalError = err.originalError as Boom;
+        return ({ message: err.message, statusCode: originalError?.output?.statusCode });
+    },
     context: {
         req: request,
         res: response,

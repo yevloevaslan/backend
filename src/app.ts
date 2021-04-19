@@ -9,12 +9,6 @@ import db from './db';
 import { apiErrorHandler } from './libs/errorHandler';
 db();
 
-if (NODE_ENV !== 'production') {
-    app.use((req: Request, _res: Response, next: NextFunction) => {
-        console.log(`${new Date()} ${req.ip}:${req.method} ${req.url}`);
-        next();
-    });
-}
 app.use(cors({
     origin: true,
     methods: 'GET,POST,PUT,DELETE,OPTIONS,PATCH',
@@ -25,6 +19,13 @@ app.use(cors({
 app.use(express.urlencoded({extended:true}));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
+
+if (NODE_ENV !== 'production') {
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+        console.log(`${new Date()} ${req.ip}:${req.method} ${req.url} ${JSON.stringify(req.body)}`);
+        next();
+    });
+}
 
 app.get('/api/ready', (_req, res) => res.send());
 app.use('/api', routes);

@@ -15,4 +15,5 @@ export interface IAdmin {
     login: string,
     createdAt: string,
     updatedAt: string,
+    password?: string,
 }

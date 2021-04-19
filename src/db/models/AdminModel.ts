@@ -1,14 +1,6 @@
 import {Schema, model, Document} from 'mongoose';
 import { IAdmin } from '../../entities';
 
-export interface IAdminModel extends Document, IAdmin {
-    _id: string,
-    login: string,
-    createdAt: string,
-    updatedAt: string,
-    password: string,
-}
-
 const Admin = new Schema({
     login: {
         type: String,
@@ -23,4 +15,4 @@ const Admin = new Schema({
     timestamps: true,
 });
 
-export const AdminModel = model<IAdminModel>('admin', Admin);
+export const AdminModel = model<Document&IAdmin>('admin', Admin);
