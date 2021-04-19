@@ -133,6 +133,7 @@ export const root = {
             title: taskData.title,
             type: taskData.type,
             params: taskData.params as TaskParams,
+            active: taskData.active,
         });
         return true;
     },
