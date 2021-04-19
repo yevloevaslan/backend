@@ -1,15 +1,16 @@
 const {beforeAll, afterAll} = require('@jest/globals');
 import mongoose from 'mongoose';
 import {MongoMemoryServer} from 'mongodb-memory-server';
-import {AdminModel, ConfirmCodeModel, UserModel} from '../db/models';
+import {AdminModel, ConfirmCodeModel, UserModel, TaskModel} from '../db/models';
 
 let mongoServer;
 const opts = {useNewUrlParser: true, useUnifiedTopology: true};
 
-export const deleteAll = async () => {
+export const deleteAll = async (): Promise<void> => {
     await UserModel.deleteMany();
     await AdminModel.deleteMany();
     await ConfirmCodeModel.deleteMany();
+    await TaskModel.deleteMany();
 };
 
 beforeAll(async () => {
