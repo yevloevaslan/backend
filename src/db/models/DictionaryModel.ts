@@ -4,11 +4,11 @@ import {IDictionary} from '../../entities/Dictionary.entity';
 const Dictionary = new Schema({
     rus: {
         type: String,
-        unique: true,
+        required: true,
     },
     ing: {
         type: String,
-        unique: true,
+        required: true,
     },
 });
 

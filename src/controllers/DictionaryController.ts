@@ -1,7 +1,19 @@
-import {wordDataInterface, wordInterface} from './interfaces';
 import {DictionaryModel} from '../db/models';
 import {conflict} from 'boom';
 import {IDictionary} from '../entities/Dictionary.entity';
+import Joi from 'joi';
+import {schemaErrorHandler} from '../libs/joiSchemaValidation';
+
+interface createWord {
+    rus: string,
+    ing: string,
+}
+
+interface wordInterface {
+    _id?: string,
+    rus?: string,
+    ing?: string,
+}
 
 interface wordResultData {
     data: {
@@ -10,11 +22,7 @@ interface wordResultData {
     }
 }
 
-interface voidResult {
-    data: null
-}
-
-interface deleteResult {
+interface booleanResult {
     data: boolean
 }
 
@@ -22,7 +30,22 @@ interface findResult {
     data: IDictionary []
 }
 
-const createWord = async (data: wordDataInterface): Promise<wordResultData> => {
+const wordMainSchema = Joi.object({
+    rus: Joi.string().required(),
+    ing: Joi.string().required(),
+});
+
+const wordSchema = Joi.object({
+    rus: Joi.string(),
+    ing: Joi.string(),
+});
+
+const deleteWordSchema = Joi.object({
+    _id: Joi.string().required(),
+});
+
+const createWord = async (data: createWord): Promise<wordResultData> => {
+    schemaErrorHandler(wordMainSchema.validate(data));
     const word = await DictionaryModel.findOne(data);
     if (word) {
         console.error('Conflict in creating word');
@@ -37,33 +60,34 @@ const createWord = async (data: wordDataInterface): Promise<wordResultData> => {
     };
 };
 
-const updateWord = async (data: wordInterface): Promise<voidResult> => {
+const updateWord = async (data: wordInterface): Promise<booleanResult> => {
+    schemaErrorHandler(wordSchema.validate(data));
     const query: wordInterface = {};
     if (data.rus) query.rus = data.rus;
     if (data.ing) query.ing = data.ing;
     await DictionaryModel.updateOne({_id: data._id}, {$set: query});
     return {
-        data: null,
+        data: true,
     };
 };
 
-const deleteWord = async (data: { _id: string }): Promise<deleteResult> => {
+const deleteWord = async (data: { _id: string }): Promise<booleanResult> => {
+    schemaErrorHandler(deleteWordSchema.validate(data));
     await DictionaryModel.deleteOne({_id: data._id});
     return {
         data: true,
     };
 };
 
-const findWord = async (query: wordInterface):Promise<findResult> => {
+const findWord = async (query: wordInterface): Promise<findResult> => {
+    schemaErrorHandler(wordSchema.validate(query));
     let result = [];
     if (query.rus) {
         result = await DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}}).limit(10);
     }
     if (query.ing) {
-        result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}`}}).limit(10);
+        result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}/i`}}).limit(10);
     }
-    if (!result) throw conflict('Слова не найдены');
-    
     return {
         data: result,
     };
