@@ -57,10 +57,10 @@ const deleteWord = async (data: { _id: string }): Promise<deleteResult> => {
 const findWord = async (query: wordInterface):Promise<findResult> => {
     let result = [];
     if (query.rus) {
-        result = await DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}});
+        result = await DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}}).limit(10);
     }
     if (query.ing) {
-        result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}`}});
+        result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}`}}).limit(10);
     }
     if (!result) throw conflict('Слова не найдены');
     
