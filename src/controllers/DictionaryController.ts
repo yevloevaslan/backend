@@ -57,7 +57,7 @@ const deleteWord = async (data: { _id: string }): Promise<deleteResult> => {
 const findWord = async (query: wordInterface):Promise<findResult> => {
     let result = [];
     if (query.rus) {
-        result = await Promise.all([DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}})]);
+        result = await DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}});
     }
     if (query.ing) {
         result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}`}});
