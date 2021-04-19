@@ -11,7 +11,7 @@ afterAll(async () => {
 
 describe('Admin routes tests', () => {
     it('success login', async () => {
-        const admin = await new AdminModel({
+        await new AdminModel({
             login: 'admin',
             password: '$2a$10$Pf7yK8V46gw7Fg/V/7auLevmDvLZkwlU.ZdtPL3i8K8ivPjIHUwEa',
         }).save();

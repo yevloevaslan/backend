@@ -5,7 +5,7 @@ import db from '../db';
 db();
 import {schema, root} from './schema';
 import cookieParser from 'cookie-parser';
-// import { checkTokenMiddleware } from '../routes/middlewares/auth.middleware';
+import { checkTokenMiddleware } from '../routes/middlewares/auth.middleware';
 import { apiErrorHandler } from '../libs/errorHandler';
 import {login} from '../controllers/AdminController';
 import Boom from 'boom';
@@ -27,7 +27,7 @@ adminApp.post('/api/admin/login', async (req, res, next) => {
     }
 });
 
-adminApp.use('/api/admin', graphqlHTTP((request, response, _graphQLParams) => ({
+adminApp.use('/api/admin', checkTokenMiddleware('admin'), graphqlHTTP((request, response, _graphQLParams) => ({
     schema,
     rootValue: root,
     graphiql: true,
