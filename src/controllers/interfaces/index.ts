@@ -22,6 +22,7 @@ export interface wordDataInterface {
 }
 
 export interface wordInterface {
+    _id?: string,
     rus?: string,
     ing?: string,
 }
