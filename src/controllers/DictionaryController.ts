@@ -62,10 +62,10 @@ const createWord = async (data: createWord): Promise<wordResultData> => {
 
 const updateWord = async (data: wordInterface): Promise<booleanResult> => {
     schemaErrorHandler(wordSchema.validate(data));
-    const query: wordInterface = {};
-    if (data.rus) query.rus = data.rus;
-    if (data.ing) query.ing = data.ing;
-    await DictionaryModel.updateOne({_id: data._id}, {$set: query});
+    const updateData: wordInterface = {};
+    if (data.rus) updateData.rus = data.rus;
+    if (data.ing) updateData.ing = data.ing;
+    await DictionaryModel.updateOne({_id: data._id}, {$set: updateData});
     return {
         data: true,
     };

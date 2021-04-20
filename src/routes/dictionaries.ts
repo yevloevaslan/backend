@@ -4,9 +4,9 @@ import {checkTokenMiddleware} from './middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/find', checkTokenMiddleware('user'), async (req, res, next) => {
+router.get('/', checkTokenMiddleware('user'), async (req, res, next) => {
     try {
-        const result = await findWord(req.body);
+        const result = await findWord(req.query);
         res.send(result);
     } catch (err) {
         next(err);
