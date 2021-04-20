@@ -40,6 +40,12 @@ export default class TaskFourClass implements TaskClassInterface {
 
     async updateTask(data: taskDataInterface<TaskFour>): Promise<void> {
         await updateTask(data);
+        if (data.params) {
+            schemaErrorHandler(taskParamsSchema.validate(data));
+            this.task.params = data.params;
+        }
+        await this.task.save();
+        return;
     }
 
     data(): ITask<TaskFour> {

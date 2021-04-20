@@ -41,6 +41,12 @@ export default class TaskOneClass implements TaskClassInterface {
 
     async updateTask(data: taskDataInterface<TaskOne>): Promise<void> {
         await updateTask(data);
+        if (data.params) {
+            schemaErrorHandler(taskParamsSchema.validate(data));
+            this.task.params = data.params;
+        }
+        await this.task.save();
+        return;
     }
 
 

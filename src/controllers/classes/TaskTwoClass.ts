@@ -43,6 +43,12 @@ export default class TaskTwoClass implements TaskClassInterface {
 
     async updateTask(data: taskDataInterface<TaskTwo>): Promise<void> {
         await updateTask(data);
+        if (data.params) {
+            schemaErrorHandler(taskParamsSchema.validate(data));
+            this.task.params = data.params;
+        }
+        await this.task.save();
+        return;
     }
 
     data(): ITask<TaskTwo> {
