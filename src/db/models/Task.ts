@@ -22,6 +22,10 @@ export const Task = new Schema({
         type: Number,
         required: true,
     },
+    active: {
+        type: Boolean,
+        required: true,
+    },
 }, {
     timestamps: true,
     strict: false,

@@ -8,10 +8,11 @@ export interface userUpdateInterface {
 }
 
 export interface taskDataInterface<T> {
-  title: string,
-  description: string,
-  type: string,
-  level: string,
-  points: number,
-  params: T,
+    title: string,
+    description: string,
+    type: string,
+    level: string,
+    points: number,
+    params: T,
+    active: boolean,
 }

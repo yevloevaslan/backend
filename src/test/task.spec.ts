@@ -19,6 +19,7 @@ describe('Tasks', () => {
                         text: "test task question",
                         answer: "one"
                     }
+                    active: true,
                 })
             }`})
             .expect(200)

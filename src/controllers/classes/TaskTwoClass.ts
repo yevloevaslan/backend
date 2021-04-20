@@ -6,17 +6,18 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 import { Document } from 'mongoose';
+import { setValuesToUpdate } from './functions/setValuesToUpdate';
 
-const taskParamsSchema = Joi.object({
+export const taskParamsSchema = Joi.object({
     text: Joi.string().required(),
     answers: Joi.array().items(Joi.string()).required(),
     answer: Joi.string().required(),
 }).unknown();
 
 export default class TaskTwoClass implements TaskClassInterface {
-    private task: ITask<TaskParams>&Document;
+    private task: ITask<TaskParams> & Document;
 
-    constructor(task?: ITask<TaskParams>&Document) {
+    constructor(task?: ITask<TaskParams> & Document) {
         this.task = task;
     }
 
@@ -41,16 +42,13 @@ export default class TaskTwoClass implements TaskClassInterface {
     }
 
     async updateTask(data: taskDataInterface<TaskTwo>): Promise<void> {
-        if (data.title) this.task.title = data.title;
-        if (data.description) this.task.description = data.description;
-        
-        if (data.level) this.task.level = data.level;
-        if (data.points) this.task.points = data.points;
+        setValuesToUpdate(this, data);
         if (data.params) {
-            schemaErrorHandler(taskParamsSchema.validate(data));
+            schemaErrorHandler(taskParamsSchema.validate(data.params));
             this.task.params = data.params;
         }
         await this.task.save();
+        return;
     }
 
     data(): ITask<TaskTwo> {
@@ -62,6 +60,7 @@ export default class TaskTwoClass implements TaskClassInterface {
             points: this.task.points,
             level: this.task.level,
             params: this.task.params as unknown as TaskTwo,
+            active: this.task.active,
         };
     }
 }

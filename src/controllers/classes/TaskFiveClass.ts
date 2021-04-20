@@ -6,6 +6,7 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 import { Document } from 'mongoose';
+import { setValuesToUpdate } from './functions/setValuesToUpdate';
 
 const taskParamsSchema = Joi.object({
     text: Joi.string().required(),
@@ -39,16 +40,13 @@ export default class TaskFiveClass implements TaskClassInterface {
     }
 
     async updateTask(data: taskDataInterface<TaskFive>): Promise<void> {
-        if (data.title) this.task.title = data.title;
-        if (data.description) this.task.description = data.description;
-        
-        if (data.level) this.task.level = data.level;
-        if (data.points) this.task.points = data.points;
+        setValuesToUpdate(this, data);
         if (data.params) {
             schemaErrorHandler(taskParamsSchema.validate(data.params));
             this.task.params = data.params;
         }
         await this.task.save();
+        return;
     }
 
     data(): ITask<TaskFive> {
@@ -60,6 +58,7 @@ export default class TaskFiveClass implements TaskClassInterface {
             points: this.task.points,
             level: this.task.level,
             params: this.task.params as TaskFive,
+            active: this.task.active,
         };
     }
 }

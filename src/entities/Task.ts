@@ -6,6 +6,7 @@ export interface ITask<T> {
     level: string,
     points: number,
     params: T,
+    active: boolean,
 }
 
 export interface TaskOne {

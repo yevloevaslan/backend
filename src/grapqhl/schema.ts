@@ -34,7 +34,8 @@ export const schema = buildSchema(`
         description: String,
         level: String,
         points: Int,
-        params: params
+        params: params,
+        active: Boolean
     }
     
     input TaskCreateData {
@@ -43,7 +44,8 @@ export const schema = buildSchema(`
         type: String!,
         level: String!,
         points: Int!,
-        params: params!
+        params: params!,
+        active: Boolean!
     }
 
     input params {
@@ -133,6 +135,7 @@ export const root = {
             title: taskData.title,
             type: taskData.type,
             params: taskData.params as TaskParams,
+            active: taskData.active,
         });
         return true;
     },

@@ -16,6 +16,7 @@ export interface TaskResultData {
     level: string,
     points: number,
     params: TaskParams,
+    active: boolean,
 }
 
 export interface TaskResultMeta {
@@ -52,6 +53,7 @@ interface creatTask {
         type: string,
         level: string,
         points: number,
+        active: boolean,
     }
 }
 
@@ -61,6 +63,7 @@ export interface updateTaskData {
     level?: string,
     points?: number,
     params?: TaskParams,
+    active?: boolean,
 }
 
 const taskMainSchema = Joi.object({
@@ -69,6 +72,7 @@ const taskMainSchema = Joi.object({
     type: Joi.string().min(1).max(5).required(),
     level: Joi.string().min(0).max(2).required(),
     points: Joi.number().required(),
+    active: Joi.boolean().required(),
 }).unknown();
 
 const taskUpdateInputSchema = Joi.object({
@@ -77,6 +81,7 @@ const taskUpdateInputSchema = Joi.object({
     level: Joi.string(),
     points: Joi.number(),
     params: Joi.object(),
+    active: Joi.boolean(),
 });
 
 const test = Joi.object({
@@ -96,6 +101,7 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
             type: data.type,
             level: data.level,
             points: data.points,
+            active: data.active,
         },
     };
 };
