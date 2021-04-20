@@ -6,7 +6,7 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 import { Document } from 'mongoose';
-import { updateTask } from './functions/updateTask';
+import { setValuesToUpdate } from './functions/setValuesToUpdate';
 
 const taskParamsSchema = Joi.object({
     sound: Joi.string().required(),
@@ -40,7 +40,7 @@ export default class TaskThreeClass implements TaskClassInterface {
     }
 
     async updateTask(data: taskDataInterface<TaskThree>): Promise<void> {
-        await updateTask(data);
+        setValuesToUpdate(this, data);
         if (data.params) {
             schemaErrorHandler(taskParamsSchema.validate(data));
             this.task.params = data.params;

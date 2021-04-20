@@ -6,7 +6,7 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 import { Document } from 'mongoose';
-import { updateTask } from './functions/updateTask';
+import { setValuesToUpdate } from './functions/setValuesToUpdate';
 
 const taskParamsSchema = Joi.object({
     photos: Joi.array().items(Joi.string()).required().min(2),
@@ -40,9 +40,9 @@ export default class TaskOneClass implements TaskClassInterface {
     }
 
     async updateTask(data: taskDataInterface<TaskOne>): Promise<void> {
-        await updateTask(data);
+        setValuesToUpdate(this, data);
         if (data.params) {
-            schemaErrorHandler(taskParamsSchema.validate(data));
+            schemaErrorHandler(taskParamsSchema.validate(data.params));
             this.task.params = data.params;
         }
         await this.task.save();
