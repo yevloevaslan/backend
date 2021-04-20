@@ -79,14 +79,14 @@ const deleteWord = async (data: { _id: string }): Promise<booleanResult> => {
     };
 };
 
-const findWord = async (query: wordInterface): Promise<findResult> => {
-    schemaErrorHandler(wordSchema.validate(query));
+const findWord = async (data: wordInterface): Promise<findResult> => {
+    schemaErrorHandler(wordSchema.validate(data));
     let result = [];
-    if (query.rus) {
-        result = await DictionaryModel.find({rus: {$regex: `/^${query.rus}/i`}}).limit(10);
+    if (data.rus) {
+        result = await DictionaryModel.find({rus: {$regex: `^${data.rus}`}}).limit(10);
     }
-    if (query.ing) {
-        result = await DictionaryModel.find({ing: {$regex: `/^${query.ing}/i`}}).limit(10);
+    if (data.ing) {
+        result = await DictionaryModel.find({ing: {$regex: `^${data.ing}`}}).limit(10);
     }
     return {
         data: result,
