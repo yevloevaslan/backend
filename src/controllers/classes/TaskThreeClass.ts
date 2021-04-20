@@ -42,7 +42,7 @@ export default class TaskThreeClass implements TaskClassInterface {
     async updateTask(data: taskDataInterface<TaskThree>): Promise<void> {
         setValuesToUpdate(this, data);
         if (data.params) {
-            schemaErrorHandler(taskParamsSchema.validate(data));
+            schemaErrorHandler(taskParamsSchema.validate(data.params));
             this.task.params = data.params;
         }
         await this.task.save();
