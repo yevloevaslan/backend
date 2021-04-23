@@ -72,3 +72,20 @@ paths:
       responses:
         200:
           description: ok
+  /tasks/{userId}/{level}:
+    get:
+      tags:
+        - Task
+      summary: Get random not completed user task
+      parameters:
+        - in: path
+          name: userId
+          type: string
+          required: true
+        - in: path
+          name: level
+          type: string
+          required: true
+      responses:
+        200:
+          description: ok

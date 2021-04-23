@@ -7,6 +7,8 @@ import { ITask } from '../entities/Task';
 import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
+import {CompletedTaskModel} from '../db/models';
+import { conflict } from 'boom';
 
 export interface TaskResultData {
     _id: string,
@@ -66,6 +68,17 @@ export interface updateTaskData {
     active?: boolean,
 }
 
+interface getRandomTask {
+    userId: string,
+    level: string,
+}
+
+interface randomTask {
+    data: {
+        task: TaskResultData
+    }
+}
+
 const taskMainSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string(),
@@ -87,6 +100,11 @@ const taskUpdateInputSchema = Joi.object({
 const test = Joi.object({
     _id: Joi.string().required(),
     answer: Joi.string().required(),
+});
+
+const randomTaskSchema = Joi.object({
+    userId: Joi.string().required(),
+    level: Joi.string().required(),
 });
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
@@ -122,6 +140,24 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
             answer: task.getAnswer(),
         },
     };
+};
+
+const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
+    schemaErrorHandler(randomTaskSchema.validate(data));
+
+    const tasks = await TaskModel.find({level: data.level});
+    for (const task of tasks) {
+        const randomTaskCheck = await CompletedTaskModel.find({userId: data.userId, taskId: {$ne: task._id}});
+        if (randomTaskCheck) {
+            await new CompletedTaskModel({userId: data.userId, taskId: task._id}).save();
+            return {
+                data: {
+                    task,
+                },
+            };
+        }
+    }
+    throw conflict('Not completed task is not found');
 };
 
 const getTask = async (_id: string): Promise<getTaskResult> => {
@@ -181,4 +217,5 @@ export {
     getTasks,
     deleteTask,
     updateTask,
+    giveRandomTaskToUser,
 };
