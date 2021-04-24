@@ -31,9 +31,9 @@ router.post('/:id/answer', checkTokenMiddleware('user'), async (req: UserRequest
     }
 });
 
-router.get('/random/:userId/:level', checkTokenMiddleware('user'), async (req, res, next) => {
+router.get('/random/:level', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
     try {
-        const result = await giveRandomTaskToUser({userId: req.params.userId, level: req.params.level});
+        const result = await giveRandomTaskToUser({userId: req.user._id, level: req.params.level});
         res.send(result);
     } catch (err) {
         next(err);

@@ -8,7 +8,7 @@ import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
 import {CompletedTaskModel} from '../db/models';
-import { conflict } from 'boom';
+import {conflict} from 'boom';
 
 export interface TaskResultData {
     _id: string,
@@ -125,13 +125,15 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
 };
 
 const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
-    schemaErrorHandler(test.validate(_id));
+    schemaErrorHandler(test.validate({_id, answer}));
+    //await new CompletedTaskModel({userId: user._id, taskId: _id}).save();
 
     const task = await TaskFactory(null, _id);
     let trueResult = false;
 
     if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
+        await new CompletedTaskModel({userId: user._id, taskId: _id}).save();
         trueResult = true;
     }
     return {
@@ -144,20 +146,19 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 
 const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
     schemaErrorHandler(randomTaskSchema.validate(data));
-
-    const tasks = await TaskModel.find({level: data.level});
-    for (const task of tasks) {
-        const randomTaskCheck = await CompletedTaskModel.find({userId: data.userId, taskId: {$ne: task._id}});
-        if (randomTaskCheck) {
-            await new CompletedTaskModel({userId: data.userId, taskId: task._id}).save();
-            return {
-                data: {
-                    task,
-                },
-            };
-        }
+    const completedTasks = await CompletedTaskModel.find({userId: data.userId});
+    const tasks = [];
+    for (const completedTask of completedTasks) {
+        tasks.push(completedTask._id);
     }
-    throw conflict('Not completed task is not found');
+    const countTasks = await TaskModel.count({_id: {$nin: tasks}});
+    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}}).skip(Math.floor(countTasks * Math.random()));
+    if (!randomTask) throw conflict('No tasks for user');
+    return {
+        data: {
+            task: randomTask,
+        },
+    };
 };
 
 const getTask = async (_id: string): Promise<getTaskResult> => {
