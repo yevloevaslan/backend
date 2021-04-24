@@ -7,6 +7,8 @@ import { ITask } from '../entities/Task';
 import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
+import {CompletedTaskModel} from '../db/models';
+import {conflict} from 'boom';
 
 export interface TaskResultData {
     _id: string,
@@ -66,6 +68,17 @@ export interface updateTaskData {
     active?: boolean,
 }
 
+interface getRandomTask {
+    userId: string,
+    level: string,
+}
+
+interface randomTask {
+    data: {
+        task: TaskResultData
+    }
+}
+
 const taskMainSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string(),
@@ -89,6 +102,11 @@ const test = Joi.object({
     answer: Joi.string().required(),
 });
 
+const randomTaskSchema = Joi.object({
+    userId: Joi.string().required(),
+    level: Joi.string().required(),
+});
+
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     schemaErrorHandler(taskMainSchema.validate(data));
 
@@ -107,19 +125,41 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
 };
 
 const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
-    schemaErrorHandler(test.validate(_id));
+    schemaErrorHandler(test.validate({_id, answer}));
 
     const task = await TaskFactory(null, _id);
     let trueResult = false;
 
     if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
+        await new CompletedTaskModel({userId: user._id, taskId: _id, correct: true}).save();
         trueResult = true;
     }
     return {
         data: {
             trueResult,
             answer: task.getAnswer(),
+        },
+    };
+};
+
+const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
+    schemaErrorHandler(randomTaskSchema.validate(data));
+    const completedTasks = await CompletedTaskModel.aggregate([
+        {$match: {userId: data.userId}},
+        {$group: {_id: null, task_ids: {$push: '$_id'} }},
+    ]);
+    let tasks = [];
+    if (completedTasks[0]) {
+        tasks = completedTasks[0].task_ids;
+    }
+
+    const countTasks = await TaskModel.count({_id: {$nin: tasks}, active: true});
+    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, active: true}).skip(Math.floor(countTasks * Math.random()));
+    if (!randomTask) throw conflict('No tasks for user');
+    return {
+        data: {
+            task: randomTask,
         },
     };
 };
@@ -181,4 +221,5 @@ export {
     getTasks,
     deleteTask,
     updateTask,
+    giveRandomTaskToUser,
 };
