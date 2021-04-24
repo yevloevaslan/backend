@@ -147,12 +147,13 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
     schemaErrorHandler(randomTaskSchema.validate(data));
     const completedTasks = await CompletedTaskModel.aggregate([
         {$match: {userId: data.userId}},
-        {$group: {_id: '$_id'}}
+        {$group: {_id: null, task_ids: {$push: '$_id'} }}
     ])
-    const tasks = [];
-    for (const completedTask of completedTasks) {
-        tasks.push(completedTask._id);
+    let tasks = []
+    if (completedTasks[0]) {
+        tasks = completedTasks[0].task_ids
     }
+
     const countTasks = await TaskModel.count({_id: {$nin: tasks}, active: true});
     const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw conflict('No tasks for user');
