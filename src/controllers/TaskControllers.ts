@@ -126,14 +126,13 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
 
 const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Promise<checkTaskResult> => {
     schemaErrorHandler(test.validate({_id, answer}));
-    //await new CompletedTaskModel({userId: user._id, taskId: _id}).save();
 
     const task = await TaskFactory(null, _id);
     let trueResult = false;
 
     if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
-        await new CompletedTaskModel({userId: user._id, taskId: _id}).save();
+        await new CompletedTaskModel({userId: user._id, taskId: _id, correct: true}).save();
         trueResult = true;
     }
     return {
@@ -146,13 +145,16 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 
 const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
     schemaErrorHandler(randomTaskSchema.validate(data));
-    const completedTasks = await CompletedTaskModel.find({userId: data.userId});
+    const completedTasks = await CompletedTaskModel.aggregate([
+        {$match: {userId: data.userId}},
+        {$group: {_id: '$_id'}}
+    ])
     const tasks = [];
     for (const completedTask of completedTasks) {
         tasks.push(completedTask._id);
     }
-    const countTasks = await TaskModel.count({_id: {$nin: tasks}});
-    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}}).skip(Math.floor(countTasks * Math.random()));
+    const countTasks = await TaskModel.count({_id: {$nin: tasks}, active: true});
+    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw conflict('No tasks for user');
     return {
         data: {

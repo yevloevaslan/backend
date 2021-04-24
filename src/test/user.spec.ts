@@ -1,5 +1,3 @@
-import {createTask, giveRandomTaskToUser} from '../controllers/TaskControllers';
-
 const {describe, it, afterAll, expect} = require('@jest/globals');
 import request from 'supertest';
 import app from '../app';
@@ -132,41 +130,5 @@ describe('User routes tests', () => {
         expect(userData.birthday).toEqual(new Date('2001-01-01T00:00:00.000Z'));
         expect(userData.email).toEqual('email@mail.ru');
         expect(userData.sex).toEqual('f');
-    });
-    it('give random task to user', async () => {
-        for (let i = 1; i < 11; i++) {
-            await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
-                type: '4',
-                level: '1',
-                points: 1,
-                params: {
-                    sound: 'sound',
-                    answer: 'one',
-                },
-                active: true,
-            });
-        }
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
-        const code = confirmCodeModel[0].code;
-        const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
-        const taskIds = new Set();
-        for (let i = 0; i < 10; i++) {
-            const randomTask = await giveRandomTaskToUser({userId: `${confirmLoginData.data.user._id}`, level: '1'});
-            taskIds.add(randomTask.data.task._id);
-            await request(app)
-                .post(`/api/tasks/${randomTask.data.task._id}/answer`)
-                .set({
-                    'x-access-token': confirmLoginData.data.token,
-                })
-                .send({
-                    answer: 'one',
-                })
-                .expect(200);
-        }
-        expect(taskIds.size).toEqual(10);
     });
 });

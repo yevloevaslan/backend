@@ -10,6 +10,10 @@ const CompletedTask = new Schema({
         type: String,
         required: true,
     },
+    correct: {
+        type: Boolean,
+    }
 });
 
 export const CompletedTaskModel = model<ICompletedTask&Document>('completed_task', CompletedTask);
+

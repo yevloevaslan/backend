@@ -10,20 +10,20 @@ export interface ITask<T> {
 }
 
 export interface TaskOne {
-    photos: [string],
+    photos: string[],
     text: string,
     answer?: string,
 }
 
 export interface TaskTwo {
     text: string,
-    answers: [string],
+    answers: string[],
     answer?: string,
 }
 
 export interface TaskThree {
     sound: string,
-    answers: [string],
+    answers: string[],
     answer?: string,
 }
 
@@ -33,7 +33,7 @@ export interface TaskFour {
 }
 
 export interface TaskFive {
-    answers: [string],
+    answers: string[],
     text: string,
     answer?: string,
 }

@@ -21,11 +21,11 @@ export default class TaskFourClass implements TaskClassInterface {
     }
 
     getAnswer(): string {
-        return this.task.params.answer; //return 'one'
+        return this.task.params.answer;
     }
 
     checkTask(value: unknown): boolean {
-        if (value === this.task.params.answer) return true; //value === 'one'
+        if (value === this.task.params.answer) return true;
         return false;
     }
 
