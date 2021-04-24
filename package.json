@@ -10,11 +10,7 @@
     "lint": "eslint .",
     "generate": "graphql-codegen"
   },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm test"
-    }
-  },
+
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MustafaAushev/translater.git"
