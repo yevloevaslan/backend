@@ -1,11 +1,11 @@
-import {createTask, giveRandomTaskToUser} from "../controllers/TaskControllers";
+import {createTask, giveRandomTaskToUser} from '../controllers/TaskControllers';
 
 const {describe, it, expect} = require('@jest/globals');
 import request from 'supertest';
 import app from '../grapqhl';
 import App from '../app';
-import {confirmLogin, login} from "../controllers/UserController";
-import {ConfirmCodeModel} from "../db/models";
+import {confirmLogin, login} from '../controllers/UserController';
+import {ConfirmCodeModel} from '../db/models';
 const URI = '/api/admin';
 
 describe('Tasks', () => {
@@ -43,7 +43,7 @@ describe('Tasks', () => {
                 params: {
                     photos: ['photo1', 'photo2'],
                     text: 'test text',
-                    answer: 'one'
+                    answer: 'one',
                 },
                 active: true,
             });
@@ -56,7 +56,7 @@ describe('Tasks', () => {
                 params: {
                     text: 'test text',
                     answers: ['one', 'answer2'],
-                    answer: 'one'
+                    answer: 'one',
                 },
                 active: true,
             });
@@ -69,7 +69,7 @@ describe('Tasks', () => {
                 params: {
                     sound: 'sound',
                     answers: ['one', 'answer2'],
-                    answer: 'one'
+                    answer: 'one',
                 },
                 active: true,
             });
@@ -81,7 +81,7 @@ describe('Tasks', () => {
                 points: 1,
                 params: {
                     sound: 'sound',
-                    answer: 'one'
+                    answer: 'one',
                 },
                 active: true,
             });
@@ -94,7 +94,7 @@ describe('Tasks', () => {
                 params: {
                     text: 'test text',
                     answers: ['one', 'answer2'],
-                    answer: 'one'
+                    answer: 'one',
                 },
                 active: true,
             });
