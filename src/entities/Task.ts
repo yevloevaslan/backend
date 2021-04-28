@@ -9,30 +9,30 @@ export interface ITask<T> {
     active: boolean,
 }
 
-export interface TaskOne {
+export interface TaskOne { //задание с изображением
     photos: string[],
     text: string,
     answer?: string,
 }
 
-export interface TaskTwo {
+export interface TaskTwo { //выбрать правильный перевод
     text: string,
     answers: string[],
     answer?: string,
 }
 
-export interface TaskThree {
+export interface TaskThree {//аудиозадание
     sound: string,
     answers: string[],
     answer?: string,
 }
 
-export interface TaskFour {
+export interface TaskFour {//аудиозадание со свободным ответом
     sound: string,
     answer?: string,
 }
 
-export interface TaskFive {
+export interface TaskFive {//заполните пропуск
     answers: string[],
     text: string,
     answer?: string,
