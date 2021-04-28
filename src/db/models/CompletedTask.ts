@@ -12,7 +12,7 @@ const CompletedTask = new Schema({
     },
     correct: {
         type: Boolean,
-    }
+    },
 });
 
 export const CompletedTaskModel = model<ICompletedTask&Document>('completed_task', CompletedTask);
