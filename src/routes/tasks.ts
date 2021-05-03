@@ -13,6 +13,15 @@ router.get('/', checkTokenMiddleware('user'), async (req, res, next) => {
     }
 });
 
+router.get('/random', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
+    try {
+        const result = await giveRandomTaskToUser({userId: req.user._id, level: String(req.query.level)});
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.get('/:id', checkTokenMiddleware('user'), async (req, res, next) => {
     try {
         const result = await getTask(req.params.id);
@@ -25,15 +34,6 @@ router.get('/:id', checkTokenMiddleware('user'), async (req, res, next) => {
 router.post('/:id/answer', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
     try {
         const result = await checkTaskAnswer(req.user, req.params.id, req.body.answer);
-        res.send(result);
-    } catch (err) {
-        next(err);
-    }
-});
-
-router.get('/random', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
-    try {
-        const result = await giveRandomTaskToUser({userId: req.user._id, level: String(req.query.level)});
         res.send(result);
     } catch (err) {
         next(err);
