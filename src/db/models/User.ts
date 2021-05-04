@@ -29,6 +29,9 @@ const User = new Schema({
         type: Number,
         default: 0,
     },
+    rating: {
+        type: Number,
+    },
     birthday: {
         type: Date,
     },
