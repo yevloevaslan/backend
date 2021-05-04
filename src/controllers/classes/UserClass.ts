@@ -39,6 +39,7 @@ export default class UserClass {
             createdAt: this.user.createdAt,
             phone: this.user.phone,
             score: this.user.score,
+            place: this.user.place,
             firstName: this.user.firstName,
             lastName: this.user.lastName,
             middleName: this.user.middleName,
