@@ -2,7 +2,7 @@ export interface IUser {
     _id: string,
     phone: string,
     score: number,
-    place: number,
+    rating: number,
     firstIn: boolean,
     birthday: string,
     firstName: string,

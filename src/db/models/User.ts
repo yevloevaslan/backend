@@ -29,7 +29,7 @@ const User = new Schema({
         type: Number,
         default: 0,
     },
-    place: {
+    rating: {
         type: Number,
     },
     birthday: {

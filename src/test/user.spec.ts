@@ -87,7 +87,7 @@ describe('User routes tests', () => {
         const confirmCodeModel = await ConfirmCodeModel.find({phone});
         const code = confirmCodeModel[0].code;
         const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
-        await UserModel.updateOne({$set:{place: 1}});
+        await UserModel.updateOne({$set:{rating: 1}});
         await request(app)
             .get('/api/users/info')
             .set({'x-access-token': confirmLoginData.data.token})
@@ -100,7 +100,7 @@ describe('User routes tests', () => {
                         phone: expect.any(String),
                         firstIn: false,
                         score: 0,
-                        place: 1,
+                        rating: 1,
                         updatedAt: expect.any(String),
                     },
                 });
