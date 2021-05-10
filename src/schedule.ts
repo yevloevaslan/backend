@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import {UserModel} from './src/db/models';
+import {UserModel} from './db/models';
 
 export const updateScoreRating = async ():Promise<boolean> => {
     const users = await UserModel.find({}).sort({score: 'desc'});
