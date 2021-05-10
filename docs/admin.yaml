@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: translator - admin panel
   version: 1.0.0
-host: '68.183.7.178:1854'
+host: '68.183.7.178:1855'
 schemes:
   - http
 basePath: /api/admin
