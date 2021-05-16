@@ -30,3 +30,17 @@ paths:
       responses:
         200:
           description: ok
+  /upload:
+    post:
+      tags:
+       - Upload
+      summary: Upload files
+      consumes:
+      - multipart/form-data
+      parameters:
+      - in: formData
+        name: file
+        type: file
+      responses:
+        200:
+          description: ok
