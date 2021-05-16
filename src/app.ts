@@ -7,6 +7,7 @@ import routes from './routes';
 import cookieParser from 'cookie-parser';
 import db from './db';
 import { apiErrorHandler } from './libs/errorHandler';
+import './scripts/insertTestAdmin';
 db();
 
 app.use(cors({
