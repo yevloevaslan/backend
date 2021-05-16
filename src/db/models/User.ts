@@ -54,6 +54,9 @@ const User = new Schema({
             'f',
         ],
     },
+    img: {
+        type: String,
+    },
 }, {
     timestamps: true,
 });
