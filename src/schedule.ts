@@ -31,10 +31,8 @@ const deleteUnusedFiles = async () => {
                     UserModel.findOne({img: file.path}, {_id: 1}).lean(),
                     TaskModel.findOne({$or: [{'params.photos': file.path}, {'params.sound': file.path}]}, {_id: 1}).lean(),
                 ]);
-                if (!fileExists1) {
-                    await deleteObject(file.key);
-                }
-                if (!fileExists2) {
+                if (!fileExists1 && !fileExists2) {
+                    await FileModel.deleteOne({_id: file._id});
                     await deleteObject(file.key);
                 }
             }
