@@ -5,6 +5,7 @@ import {TaskModel} from './Task';
 import {DictionaryModel} from './DictionaryModel';
 import {CompletedTaskModel} from './CompletedTask';
 import {FileModel} from './FileModel';
+import {AboutProjectModel} from './AboutProjectModel';
 
 export {
     UserModel,
@@ -14,4 +15,5 @@ export {
     DictionaryModel,
     CompletedTaskModel,
     FileModel,
+    AboutProjectModel,
 };
