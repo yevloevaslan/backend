@@ -12,8 +12,15 @@ interface InputDataInformationAboutProject {
         description: string,
     }
 }
+interface getInfoResult {
+    data: IAboutProject
+}
 
-const createOrUpdateInformationAboutProject = async(data:InputDataInformationAboutProject): Promise<IAboutProject> => {
+interface infoAboutProjectResultData {
+    data: IAboutProject
+}
+
+const createOrUpdateInformationAboutProject = async(data:InputDataInformationAboutProject): Promise<infoAboutProjectResultData> => {
     const result = await AboutProjectModel.findOne();
     if (result) {
         const updateData: InputDataInformationAboutProject = {};
@@ -23,10 +30,21 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
     } else {
         await new AboutProjectModel(data).save();
     }
-    return data as IAboutProject;
+    return {
+        data: {
+            project: data.project,
+            author: data.author,
+        },
+    };
 };
 
-const getInformationAboutProject = async(): Promise<IAboutProject> => await AboutProjectModel.findOne({}, {_id:0});
+const getInformationAboutProject = async(): Promise<getInfoResult> =>{
+    const result = await AboutProjectModel.findOne({}, {_id:0});
+    return {
+        data: result,
+    };
+};
+    
 
 export {
     createOrUpdateInformationAboutProject,
