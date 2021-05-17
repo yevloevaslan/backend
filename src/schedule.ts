@@ -22,10 +22,11 @@ const updateScoreRating = async ():Promise<boolean> => {
 const deleteUnusedFiles = async () => {
     try {
         const limit = 100;
-        let skip = await FileModel.countDocuments({createdAt: {$lte: moment().add(-30, 'minutes')}});
+        const count = await FileModel.countDocuments({createdAt: {$lte: moment().add(-30, 'minutes')}});
+        let skip = 0;
         console.log('START WHILE', skip);
-        while (skip) {
-            const files = await FileModel.find().limit(limit).skip(0);
+        while (skip < count) {
+            const files = await FileModel.find().limit(limit).skip(skip);
 
             for (const file of files) {
                 const [fileExists1, fileExists2] = await Promise.all([
@@ -38,8 +39,7 @@ const deleteUnusedFiles = async () => {
                 }
             }
 
-            skip -= limit;
-            if (skip < 0) skip = 0;
+            skip += limit;
             console.log('Iter end', skip);
         }
         console.log('While end');
