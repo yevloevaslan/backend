@@ -23,6 +23,7 @@ const deleteUnusedFiles = async () => {
     try {
         const limit = 100;
         let skip = await FileModel.countDocuments({createdAt: {$lte: moment().add(-30, 'minutes')}});
+        console.log('START WHILE', skip);
         while (skip) {
             const files = await FileModel.find().limit(limit).skip(0);
 
@@ -38,7 +39,10 @@ const deleteUnusedFiles = async () => {
             }
 
             skip -= limit;
+            if (skip < 0) skip = 0;
+            console.log('Iter end', skip);
         }
+        console.log('While end');
     } catch (err) {
         console.error(err);
     }
