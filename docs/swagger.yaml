@@ -105,3 +105,11 @@ paths:
       responses:
         200:
           description: ok
+  /about_projects:
+    get:
+      tags:
+      - AboutProject
+      summary: Get info about project
+      responses:
+        200:
+          description: ok
