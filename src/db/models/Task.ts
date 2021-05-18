@@ -15,6 +15,11 @@ export const Task = new Schema({
         required: true,
     },
     level: {
+        enum: [
+            '1',
+            '2',
+            '3',
+        ],
         type: String,
         required: true,
     },

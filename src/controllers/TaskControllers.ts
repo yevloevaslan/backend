@@ -8,7 +8,7 @@ import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
 import {CompletedTaskModel} from '../db/models';
-import {conflict} from 'boom';
+import {conflict, notFound} from 'boom';
 
 export interface TaskResultData {
     _id: string,
@@ -108,9 +108,9 @@ const randomTaskSchema = Joi.object({
 });
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
+    if (!['1', '2', '3'].includes(data.level)) throw conflict('This level do not exist');
     schemaErrorHandler(taskMainSchema.validate(data));
     await TaskFactory(data);
-
     return {
         data: {
             title: data.title,
@@ -155,7 +155,7 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
 
     const countTasks = await TaskModel.count({_id: {$nin: tasks}, level: data.level, active: true});
     const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
-    if (!randomTask) throw conflict('No tasks for user');
+    if (!randomTask) throw notFound('No tasks for user');
     return {
         data: {
             task: randomTask,
