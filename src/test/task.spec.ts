@@ -119,5 +119,48 @@ describe('Tasks', () => {
                 .expect(200);
         }
         expect(taskIds.size).toEqual(10);
+        // get tasks by level
+        await request(App)
+            .get('/api/tasks/random/?level=1')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('1');
+            });
+        // wrong level task by user
+        await request(App)
+            .get('/api/tasks/random/?level=8')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(409);
+        // get by specific level
+        await createTask({
+            title: 'Test title 4',
+            description: 'Test description 4',
+            type: '5',
+            level: '4',
+            points: 1,
+            params: {
+                text: 'test text',
+                answers: ['one', 'answer2'],
+                answer: 'one',
+            },
+            active: true,
+        });
+        await request(App)
+            .get('/api/tasks/random/?level=4')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('4');
+            });
     });
 });

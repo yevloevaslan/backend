@@ -109,7 +109,6 @@ const randomTaskSchema = Joi.object({
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     schemaErrorHandler(taskMainSchema.validate(data));
-
     await TaskFactory(data);
 
     return {
@@ -144,7 +143,7 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 };
 
 const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
-    schemaErrorHandler(randomTaskSchema.validate(data));
+    schemaErrorHandler(randomTaskSchema.validate({userId: String(data.userId), level: data.level}));
     const completedTasks = await CompletedTaskModel.aggregate([
         {$match: {userId: data.userId}},
         {$group: {_id: null, task_ids: {$push: '$_id'} }},
@@ -154,8 +153,8 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
         tasks = completedTasks[0].task_ids;
     }
 
-    const countTasks = await TaskModel.count({_id: {$nin: tasks}, active: true});
-    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, active: true}).skip(Math.floor(countTasks * Math.random()));
+    const countTasks = await TaskModel.count({_id: {$nin: tasks}, level: data.level, active: true});
+    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw conflict('No tasks for user');
     return {
         data: {
