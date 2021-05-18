@@ -5,7 +5,7 @@ import request from 'supertest';
 import app from '../grapqhl';
 import App from '../app';
 import {confirmLogin, login} from '../controllers/UserController';
-import {ConfirmCodeModel} from '../db/models';
+import {ConfirmCodeModel, TaskModel} from '../db/models';
 const URI = '/api/admin';
 
 describe('Tasks', () => {
@@ -32,6 +32,29 @@ describe('Tasks', () => {
                 expect(createTask).toEqual(true);
             });
     });
+    it('Create task with wrong level', async() => {
+        await request(app)
+            .post(URI)
+            .send({query: `mutation{
+                createTask(taskData: {
+                    title: "Test title",
+                    description: "Test description",
+                    type: "1",
+                    level: "4",
+                    points: 1,
+                    params: {
+                        photos: ["one", "two", "free"],
+                        text: "test task question",
+                        answer: "one"
+                    }
+                    active: true,
+                })
+            }`})
+            .expect(200);
+        const TaskLevel4 = await TaskModel.findOne({level: '4'});
+        expect(TaskLevel4).toBe(null);
+    });
+
     it('give random task to user', async () => {
         for (let i = 1; i < 3; i++) {
             await createTask({
@@ -119,5 +142,61 @@ describe('Tasks', () => {
                 .expect(200);
         }
         expect(taskIds.size).toEqual(10);
+        // get tasks by level
+        await request(App)
+            .get('/api/tasks/random/?level=1')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('1');
+            });
+        // wrong level task by user
+        await request(App)
+            .get('/api/tasks/random/?level=8')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(404);
+        // get by specific level
+        await createTask({
+            title: 'Test title 3',
+            description: 'Test description 3',
+            type: '5',
+            level: '3',
+            points: 1,
+            params: {
+                text: 'test text',
+                answers: ['one', 'answer2'],
+                answer: 'one',
+            },
+            active: true,
+        });
+        const TaskLevel3 = await TaskModel.findOne({level: '3'});
+        await request(App)
+            .get('/api/tasks/random/?level=3')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('3');
+                expect(res.body.data.task._id).toEqual(String(TaskLevel3._id));
+            });
+        await request(App)
+            .get('/api/tasks/random/?level=3')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('3');
+                expect(res.body.data.task._id).toEqual(String(TaskLevel3._id));
+            });
     });
 });

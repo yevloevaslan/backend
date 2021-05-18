@@ -8,7 +8,7 @@ import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
 import {CompletedTaskModel} from '../db/models';
-import {conflict} from 'boom';
+import {conflict, notFound} from 'boom';
 
 export interface TaskResultData {
     _id: string,
@@ -108,10 +108,9 @@ const randomTaskSchema = Joi.object({
 });
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
+    if (!['1', '2', '3'].includes(data.level)) throw conflict('This level do not exist');
     schemaErrorHandler(taskMainSchema.validate(data));
-
     await TaskFactory(data);
-
     return {
         data: {
             title: data.title,
@@ -144,9 +143,9 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 };
 
 const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
-    schemaErrorHandler(randomTaskSchema.validate(data));
+    schemaErrorHandler(randomTaskSchema.validate({userId: String(data.userId), level: data.level}));
     const completedTasks = await CompletedTaskModel.aggregate([
-        {$match: {userId: data.userId}},
+        {$match: {userId: data.userId, level: data.level}},
         {$group: {_id: null, task_ids: {$push: '$_id'} }},
     ]);
     let tasks = [];
@@ -154,9 +153,9 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
         tasks = completedTasks[0].task_ids;
     }
 
-    const countTasks = await TaskModel.count({_id: {$nin: tasks}, active: true});
-    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, active: true}).skip(Math.floor(countTasks * Math.random()));
-    if (!randomTask) throw conflict('No tasks for user');
+    const countTasks = await TaskModel.count({_id: {$nin: tasks}, level: data.level, active: true});
+    const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
+    if (!randomTask) throw notFound('No tasks for user');
     return {
         data: {
             task: randomTask,

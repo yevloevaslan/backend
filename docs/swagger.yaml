@@ -72,16 +72,24 @@ paths:
       responses:
         200:
           description: ok
-  /tasks/{level}:
+  /tasks:
     get:
       tags:
         - Task
       summary: Get random not completed user task
+      responses:
+        200:
+          description: ok
+  /tasks/{id}:
+    get:
+      tags:
+        - Task
+      summary: Get  user task
       parameters:
-        - in: path
-          name: level
-          type: string
-          required: true
+      - in: path
+        name: id
+        type: string
+        required: true
       responses:
         200:
           description: ok
@@ -102,6 +110,18 @@ paths:
             properties:
               answer:
                 type: string
+      responses:
+        200:
+          description: ok
+  /tasks/random:
+    get:
+      tags:
+        - Task
+      summary: Get random task by level
+      parameters:
+      - in: query
+        name: level
+        type: string
       responses:
         200:
           description: ok
