@@ -187,5 +187,16 @@ describe('Tasks', () => {
                 expect(res.body.data.task.level).toEqual('3');
                 expect(res.body.data.task._id).toEqual(String(TaskLevel3._id));
             });
+        await request(App)
+            .get('/api/tasks/random/?level=3')
+            .set({
+                'x-access-token': confirmLoginData.data.token,
+            })
+            .send({})
+            .expect(200)
+            .then((res) => {
+                expect(res.body.data.task.level).toEqual('3');
+                expect(res.body.data.task._id).toEqual(String(TaskLevel3._id));
+            });
     });
 });
