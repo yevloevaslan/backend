@@ -156,6 +156,7 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
     const countTasks = await TaskModel.count({_id: {$nin: tasks}, level: data.level, active: true});
     const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw notFound('No tasks for user');
+    delete randomTask.params.answer;
     return {
         data: {
             task: randomTask,
