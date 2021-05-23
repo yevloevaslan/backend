@@ -11,27 +11,57 @@ export type Scalars = {
   Float: number;
 };
 
+export type AboutAuthorInput = {
+  description: Scalars['String'];
+  photos: Array<Maybe<Scalars['String']>>;
+};
+
+export type AboutProjectInput = {
+  description: Scalars['String'];
+  photos: Array<Maybe<Scalars['String']>>;
+};
+
+export type AboutProjectResult = {
+  __typename?: 'AboutProjectResult';
+  project?: Maybe<AboutProjectBlock>;
+  author?: Maybe<AboutProjectBlock>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser?: Maybe<Scalars['Boolean']>;
   createTask?: Maybe<Scalars['Boolean']>;
   updateTask?: Maybe<Scalars['Boolean']>;
+  deleteTask?: Maybe<Scalars['Boolean']>;
+  updateAboutProject?: Maybe<Scalars['Boolean']>;
 };
 
 
 export type MutationUpdateUserArgs = {
-  id?: Maybe<Scalars['String']>;
-  data?: Maybe<UpdateUserData>;
+  _id?: Maybe<Scalars['String']>;
+  data: UpdateUserData;
 };
 
 
 export type MutationCreateTaskArgs = {
-  taskData?: Maybe<TaskCreateData>;
+  taskData: TaskCreateData;
 };
 
 
 export type MutationUpdateTaskArgs = {
-  taskData?: Maybe<TaskUpdateData>;
+  _id: Scalars['String'];
+  taskData: TaskUpdateData;
+};
+
+
+export type MutationDeleteTaskArgs = {
+  _id: Scalars['String'];
+};
+
+
+export type MutationUpdateAboutProjectArgs = {
+  aboutProject?: Maybe<AboutProjectInput>;
+  aboutAuthor?: Maybe<AboutAuthorInput>;
 };
 
 export type Query = {
@@ -39,6 +69,7 @@ export type Query = {
   users?: Maybe<Array<Maybe<User>>>;
   usersCount?: Maybe<Scalars['Int']>;
   tasks?: Maybe<TaskListResult>;
+  aboutProject?: Maybe<AboutProjectResult>;
 };
 
 
@@ -63,7 +94,6 @@ export type Task = {
   level: Scalars['String'];
   points: Scalars['Int'];
   params?: Maybe<ParamsType>;
-  active: Scalars['Boolean']
 };
 
 export type TaskCreateData = {
@@ -123,6 +153,12 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['String']>;
+};
+
+export type AboutProjectBlock = {
+  __typename?: 'aboutProjectBlock';
+  photos?: Maybe<Array<Maybe<Scalars['String']>>>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type PaginationParams = {

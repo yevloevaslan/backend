@@ -2,6 +2,7 @@ type Query {
     users(_id: String, pagination: paginationParams): [User],
     usersCount: Int,
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
+    aboutProject: AboutProjectResult
 }
 
 type Mutation {
@@ -9,10 +10,21 @@ type Mutation {
     createTask(taskData: TaskCreateData!): Boolean,
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
+    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
 }
 
 input TasksQuery {
     _id: String
+}
+
+input AboutProjectInput {
+    description: String,
+    photos: [String]
+}
+
+input AboutAuthorInput {
+    description: String,
+    photos: [String]
 }
 
 input paginationParams {
@@ -55,6 +67,16 @@ input UpdateUserData {
     birthday: String,
     sex: sex,
     email: String,
+}
+
+type AboutProjectResult {
+    project: aboutProjectBlock
+    author: aboutProjectBlock
+}
+
+type aboutProjectBlock {
+    photos: [String],
+    description: String,
 }
 
 type TaskListResult {
@@ -102,3 +124,4 @@ enum sex {
     f
     m
 }
+

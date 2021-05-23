@@ -1,116 +1,139 @@
 import { buildSchema } from 'graphql';
+import { createOrUpdateInformationAboutProject, getInformationAboutProject } from '../controllers/AboutProject.Controller';
 import { createTask, deleteTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
 import { getUsers, updateUserData, usersCount } from '../controllers/UserController';
 import { TaskParams } from '../entities/Task';
-import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData } from '../types';
+import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput } from '../types';
 
 type UserResolveResult = Array<User>;
 
 export const schema = buildSchema(`
-    type Query {
-        users(_id: String, pagination: paginationParams): [User],
-        usersCount: Int,
-        tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
-    }
+type Query {
+    users(_id: String, pagination: paginationParams): [User],
+    usersCount: Int,
+    tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
+    aboutProject: AboutProjectResult
+}
 
-    type Mutation {
-        updateUser(_id: String, data: UpdateUserData!): Boolean,
-        createTask(taskData: TaskCreateData!): Boolean,
-        updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
-        deleteTask(_id: String!): Boolean
-    }
+type Mutation {
+    updateUser(_id: String, data: UpdateUserData!): Boolean,
+    createTask(taskData: TaskCreateData!): Boolean,
+    updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
+    deleteTask(_id: String!): Boolean
+    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
+}
 
-    input TasksQuery {
-        _id: String
-    }
+input TasksQuery {
+    _id: String
+}
 
-    input paginationParams {
-        limit: Int,
-        page: Int
-    }
+input AboutProjectInput {
+    description: String!,
+    photos: [String]!
+}
 
-    input TaskUpdateData {
-        title: String,
-        description: String,
-        level: String,
-        points: Int,
-        params: params,
-        active: Boolean
-    }
-    
-    input TaskCreateData {
-        title: String,
-        description: String,
-        type: String!,
-        level: String!,
-        points: Int!,
-        params: params!,
-        active: Boolean!
-    }
+input AboutAuthorInput {
+    description: String!,
+    photos: [String]!
+}
 
-    input params {
-        answers: [String],
-        photos: [String],
-        sound: String,
-        text: String,
-        answer: String!
-    }
+input paginationParams {
+    limit: Int,
+    page: Int
+}
 
-    input UpdateUserData {
-        phone: String,
-        firstName: String,
-        lastName: String,
-        middleName: String,
-        birthday: String,
-        sex: sex,
-        email: String,
-    }
+input TaskUpdateData {
+    title: String,
+    description: String,
+    level: String,
+    points: Int,
+    params: params,
+    active: Boolean
+}
 
-    type TaskListResult {
-        list: [Task],
-        meta: TaskListResultMeta
-    }
+input TaskCreateData {
+    title: String!,
+    description: String!,
+    type: String!,
+    level: String!,
+    points: Int!,
+    params: params!,
+    active: Boolean!
+}
 
-    type TaskListResultMeta {
-        count: Int
-    }
+input params {
+    answers: [String],
+    photos: [String],
+    sound: String,
+    text: String,
+    answer: String!
+}
 
-    type Task {
-        _id: ID,
-        title: String!,
-        description: String!,
-        type: String!,
-        level: String!,
-        points: Int!,
-        params: paramsType
-    }
+input UpdateUserData {
+    phone: String,
+    firstName: String,
+    lastName: String,
+    middleName: String,
+    birthday: String,
+    sex: sex,
+    email: String,
+}
 
-    type paramsType {
-        answers: [String],
-        photos: [String],
-        sound: String,
-        text: String,
-        answer: String!
-    }
+type AboutProjectResult {
+    project: aboutProjectBlock
+    author: aboutProjectBlock
+}
 
-    type User {
-        _id: ID,
-        phone: String,
-        firstName: String,
-        lastName: String,
-        middleName: String,
-        score: Int,
-        birthday: String,
-        sex: sex,
-        email: String,
-        createdAt: String,
-        updatedAt: String
-    }
+type aboutProjectBlock {
+    photos: [String],
+    description: String,
+}
 
-    enum sex {
-        f
-        m
-    }
+type TaskListResult {
+    list: [Task],
+    meta: TaskListResultMeta
+}
+
+type TaskListResultMeta {
+    count: Int
+}
+
+type Task {
+    _id: ID,
+    title: String!,
+    description: String!,
+    type: String!,
+    level: String!,
+    points: Int!,
+    params: paramsType
+}
+
+type paramsType {
+    answers: [String],
+    photos: [String],
+    sound: String,
+    text: String,
+    answer: String!
+}
+
+type User {
+    _id: ID,
+    phone: String,
+    firstName: String,
+    lastName: String,
+    middleName: String,
+    score: Int,
+    birthday: String,
+    sex: sex,
+    email: String,
+    createdAt: String,
+    updatedAt: String
+}
+
+enum sex {
+    f
+    m
+}
 `);
 
 export const root = {
@@ -121,6 +144,14 @@ export const root = {
     users: async (args: {_id: string, pagination: PaginationParams}): Promise<UserResolveResult> => {
         const {data: {users}} = await getUsers({_id: args._id}, {page: args.pagination.page, limit: args.pagination.limit});
         return users;
+    },
+    aboutProject: async (): Promise<AboutProjectResult> => {
+        const {data: aboutProject} = await getInformationAboutProject();
+        return aboutProject;
+    },
+    updateAboutProject: async (args: {aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput}): Promise<boolean> => {
+        await createOrUpdateInformationAboutProject({author: args.aboutAuthor, project: args.aboutProject});
+        return true;
     },
     updateUser: async (args: {id: string, data: UpdateUserData}): Promise<boolean> => {
         await updateUserData(undefined, args.data, args.id);
@@ -139,6 +170,7 @@ export const root = {
         });
         return true;
     },
+    
     tasks: async (args: {pagination: PaginationParams, type: string, query: TasksQuery}): Promise<{list: Array<TaskResultData>, meta: TaskResultMeta}> => {
         const result = await getTasks({type: args.type, _id: args.query?._id}, {page: args.pagination?.page, limit: args.pagination?.limit});
         return {

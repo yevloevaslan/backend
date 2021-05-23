@@ -55,7 +55,7 @@ adminApp.post('/api/admin/upload', checkTokenMiddleware('admin'),
         }
     });
 
-adminApp.use('/api/admin', checkTokenMiddleware('admin'), graphqlHTTP((request, response, _graphQLParams) => ({
+adminApp.use('/api/admin', graphqlHTTP((request, response, _graphQLParams) => ({
     schema,
     rootValue: root,
     graphiql: true,
