@@ -39,8 +39,8 @@ export const schema = buildSchema(`
     }
     
     input TaskCreateData {
-        title: String!,
-        description: String!,
+        title: String,
+        description: String,
         type: String!,
         level: String!,
         points: Int!,

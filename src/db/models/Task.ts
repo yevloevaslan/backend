@@ -4,11 +4,9 @@ import { ITask, TaskParams } from '../../entities/Task';
 export const Task = new Schema({
     title: {
         type: String,
-        required: true,
     },
     description: {
         type: String,
-        required: true,
     },
     type: {
         type: String,

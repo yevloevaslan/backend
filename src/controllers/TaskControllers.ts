@@ -80,7 +80,7 @@ interface randomTask {
 }
 
 const taskMainSchema = Joi.object({
-    title: Joi.string().required(),
+    title: Joi.string(),
     description: Joi.string(),
     type: Joi.string().min(1).max(5).required(),
     level: Joi.string().min(0).max(2).required(),
