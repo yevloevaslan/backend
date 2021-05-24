@@ -26,7 +26,7 @@ const deleteUnusedFiles = async () => {
         let skip = 0;
         console.log('START WHILE', skip);
         while (skip < count) {
-            const files = await FileModel.find().limit(limit).skip(skip);
+            const files = await FileModel.find({createdAt: {$lte: moment().add(-30, 'minutes')}}).limit(limit).skip(skip);
 
             for (const file of files) {
                 const [fileExists1, fileExists2] = await Promise.all([
