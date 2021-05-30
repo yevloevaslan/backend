@@ -170,7 +170,7 @@ export const root = {
         });
         return true;
     },
-    
+
     tasks: async (args: {pagination: PaginationParams, type: string, query: TasksQuery}): Promise<{list: Array<TaskResultData>, meta: TaskResultMeta}> => {
         const result = await getTasks({type: args.type, _id: args.query?._id}, {page: args.pagination?.page, limit: args.pagination?.limit});
         return {
@@ -186,6 +186,7 @@ export const root = {
             level: taskData.level,
             title: taskData.title,
             params: taskData.params as TaskParams,
+            active: taskData.active,
         });
         return true;
     },
