@@ -105,7 +105,8 @@ type Task {
     type: String!,
     level: String!,
     points: Int!,
-    params: paramsType
+    params: paramsType,
+    active: Boolean!
 }
 
 type paramsType {

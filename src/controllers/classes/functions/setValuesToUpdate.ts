@@ -5,7 +5,7 @@ const setValuesToUpdate = function (context: any, data: taskDataInterface<any>):
     if (data.description) context.task.description = data.description;
     if (data.level) context.task.level = data.level;
     if (data.points) context.task.points = data.points;
-    if (data.active) context.task.active = data.active;
+    if (typeof data.active === 'boolean') context.task.active = data.active;
     return;
 };
 
