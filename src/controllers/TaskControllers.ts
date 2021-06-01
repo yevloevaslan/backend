@@ -145,8 +145,8 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> => {
     schemaErrorHandler(randomTaskSchema.validate({userId: String(data.userId), level: data.level}));
     const completedTasks = await CompletedTaskModel.aggregate([
-        {$match: {userId: data.userId, level: data.level}},
-        {$group: {_id: null, task_ids: {$push: '$_id'} }},
+        {$match: {userId: String(data.userId)}},
+        {$group: {_id: null, task_ids: {$push: '$taskId'} }},
     ]);
     let tasks = [];
     if (completedTasks[0]) {
