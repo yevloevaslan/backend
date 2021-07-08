@@ -3,8 +3,8 @@ import { createOrUpdateInformationAboutProject, getInformationAboutProject } fro
 import { createTask, deleteTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
 import { getUsers, updateUserData, usersCount } from '../controllers/UserController';
 import { TaskParams } from '../entities/Task';
-import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput } from '../types';
-
+import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput, FindWordResult, WordCreateData, WordUpdateData, WordQuery } from '../types';
+import { findWord, createWord, updateWord, deleteWord } from '../controllers/DictionaryController';
 type UserResolveResult = Array<User>;
 
 export const schema = buildSchema(`
@@ -12,7 +12,8 @@ type Query {
     users(_id: String, pagination: paginationParams): [User],
     usersCount: Int,
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
-    aboutProject: AboutProjectResult
+    aboutProject: AboutProjectResult,
+    word(query: WordQuery): FindWordResult
 }
 
 type Mutation {
@@ -21,6 +22,9 @@ type Mutation {
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
     updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
+    createWord(wordData: WordCreateData!): Boolean
+    updateWord(wordData: WordUpdateData!): Boolean
+    deleteWord(_id: String!): Boolean
 }
 
 input TasksQuery {
@@ -28,13 +32,13 @@ input TasksQuery {
 }
 
 input AboutProjectInput {
-    description: String!,
-    photos: [String]!
+    description: String,
+    photos: [String]
 }
 
 input AboutAuthorInput {
-    description: String!,
-    photos: [String]!
+    description: String,
+    photos: [String]
 }
 
 input paginationParams {
@@ -78,6 +82,25 @@ input UpdateUserData {
     sex: sex,
     email: String,
 }
+
+
+input WordQuery {
+    _id: String
+    rus: String
+    ing: String
+}
+
+input WordCreateData {
+    rus: String!,
+    ing: String!,
+}
+
+input WordUpdateData {
+    _id: String!
+    rus: String,
+    ing: String,
+}
+
 
 type AboutProjectResult {
     project: aboutProjectBlock
@@ -131,6 +154,15 @@ type User {
     updatedAt: String
 }
 
+type IDictionary {
+        _id: String,
+        rus: String,
+        ing: String,
+}
+type FindWordResult {
+  data: [IDictionary]
+}
+
 enum sex {
     f
     m
@@ -139,26 +171,26 @@ enum sex {
 
 export const root = {
     usersCount: async (): Promise<number> => {
-        const {data: {count}} = await usersCount();
+        const { data: { count } } = await usersCount();
         return count;
     },
-    users: async (args: {_id: string, pagination: PaginationParams}): Promise<UserResolveResult> => {
-        const {data: {users}} = await getUsers({_id: args._id}, {page: args.pagination.page, limit: args.pagination.limit});
+    users: async (args: { _id: string, pagination: PaginationParams }): Promise<UserResolveResult> => {
+        const { data: { users } } = await getUsers({ _id: args._id }, { page: args.pagination.page, limit: args.pagination.limit });
         return users;
     },
     aboutProject: async (): Promise<AboutProjectResult> => {
-        const {data: aboutProject} = await getInformationAboutProject();
+        const { data: aboutProject } = await getInformationAboutProject();
         return aboutProject;
     },
-    updateAboutProject: async (args: {aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput}): Promise<boolean> => {
-        await createOrUpdateInformationAboutProject({author: args.aboutAuthor, project: args.aboutProject});
+    updateAboutProject: async (args: { aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput }): Promise<boolean> => {
+        await createOrUpdateInformationAboutProject({ author: args.aboutAuthor, project: args.aboutProject });
         return true;
     },
-    updateUser: async (args: {id: string, data: UpdateUserData}): Promise<boolean> => {
+    updateUser: async (args: { id: string, data: UpdateUserData }): Promise<boolean> => {
         await updateUserData(undefined, args.data, args.id);
         return true;
     },
-    createTask: async (args: {taskData: TaskCreateData}): Promise<boolean> => {
+    createTask: async (args: { taskData: TaskCreateData }): Promise<boolean> => {
         const taskData = args.taskData;
         await createTask({
             points: taskData.points,
@@ -172,14 +204,14 @@ export const root = {
         return true;
     },
 
-    tasks: async (args: {pagination: PaginationParams, type: string, query: TasksQuery}): Promise<{list: Array<TaskResultData>, meta: TaskResultMeta}> => {
-        const result = await getTasks({type: args.type, _id: args.query?._id}, {page: args.pagination?.page, limit: args.pagination?.limit});
+    tasks: async (args: { pagination: PaginationParams, type: string, query: TasksQuery }): Promise<{ list: Array<TaskResultData>, meta: TaskResultMeta }> => {
+        const result = await getTasks({ type: args.type, _id: args.query?._id }, { page: args.pagination?.page, limit: args.pagination?.limit });
         return {
             list: result.data.tasks,
             meta: result.meta,
         };
     },
-    updateTask: async (args: {_id: string, taskData: TaskUpdateData}): Promise<boolean> => {
+    updateTask: async (args: { _id: string, taskData: TaskUpdateData }): Promise<boolean> => {
         const taskData = args.taskData;
         await updateTask(args._id, {
             points: taskData.points,
@@ -191,8 +223,34 @@ export const root = {
         });
         return true;
     },
-    deleteTask: async (args: {_id: string}): Promise<boolean> => {
+    deleteTask: async (args: { _id: string }): Promise<boolean> => {
         await deleteTask(args._id);
+        return true;
+    },
+    word: async (args: { query: WordQuery }): Promise<FindWordResult> => {
+        console.log(args.query);
+        const word = await findWord(args.query);
+        return word;
+    },
+    createWord: async (args: { wordData: WordCreateData }): Promise<boolean> => {
+        const wordData = args.wordData;
+        await createWord({
+            rus: wordData.rus,
+            ing: wordData.ing,
+        });
+        return true;
+    },
+    updateWord: async (args: { wordData: WordUpdateData }): Promise<boolean> => {
+        const wordData = args.wordData;
+        await updateWord({
+            _id: wordData._id,
+            rus: wordData.rus,
+            ing: wordData.ing,
+        });
+        return true;
+    },
+    deleteWord: async (args: { _id: string }): Promise<boolean> => {
+        await deleteWord({ _id: args._id });
         return true;
     },
 };

@@ -2,7 +2,8 @@ type Query {
     users(_id: String, pagination: paginationParams): [User],
     usersCount: Int,
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
-    aboutProject: AboutProjectResult
+    aboutProject: AboutProjectResult,
+    word(query: WordQuery): FindWordResult
 }
 
 type Mutation {
@@ -11,6 +12,9 @@ type Mutation {
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
     updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
+    createWord(wordData: WordCreateData!): Boolean
+    updateWord(wordData: WordUpdateData!): Boolean
+    deleteWord(_id: String!): Boolean
 }
 
 input TasksQuery {
@@ -18,13 +22,13 @@ input TasksQuery {
 }
 
 input AboutProjectInput {
-    description: String,
-    photos: [String]
+    description: String!,
+    photos: [String]!
 }
 
 input AboutAuthorInput {
-    description: String,
-    photos: [String]
+    description: String!,
+    photos: [String]!
 }
 
 input paginationParams {
@@ -69,6 +73,25 @@ input UpdateUserData {
     email: String,
 }
 
+
+input WordQuery {
+    _id: String
+    rus: String
+    ing: String
+}
+
+input WordCreateData {
+    rus: String!,
+    ing: String!,
+}
+
+input WordUpdateData {
+    _id: String!
+    rus: String,
+    ing: String,
+}
+
+
 type AboutProjectResult {
     project: aboutProjectBlock
     author: aboutProjectBlock
@@ -95,7 +118,8 @@ type Task {
     type: String!,
     level: String!,
     points: Int!,
-    params: paramsType
+    params: paramsType,
+    active: Boolean!
 }
 
 type paramsType {
@@ -120,8 +144,16 @@ type User {
     updatedAt: String
 }
 
+type IDictionary {
+        _id: String,
+        rus: String,
+        ing: String,
+}
+type FindWordResult {
+  data: [IDictionary]
+}
+
 enum sex {
     f
     m
 }
-

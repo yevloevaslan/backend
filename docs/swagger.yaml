@@ -133,3 +133,22 @@ paths:
       responses:
         200:
           description: ok
+  /dictionaries/:
+    get:
+      tags:
+      - Dictionaries
+      summary: find word
+      parameters:
+      - in: query
+        name: _id
+        type: string
+      - in: query
+        name: ing
+        type: string
+      - in: query
+        name: rus
+        type: string
+      responses:
+        200:
+          description: ok
+          

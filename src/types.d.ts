@@ -27,6 +27,18 @@ export type AboutProjectResult = {
   author?: Maybe<AboutProjectBlock>;
 };
 
+export type FindWordResult = {
+  __typename?: 'FindWordResult';
+  data?: Maybe<Array<Maybe<IDictionary>>>;
+};
+
+export type IDictionary = {
+  __typename?: 'IDictionary';
+  _id?: Maybe<Scalars['String']>;
+  rus?: Maybe<Scalars['String']>;
+  ing?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser?: Maybe<Scalars['Boolean']>;
@@ -34,6 +46,9 @@ export type Mutation = {
   updateTask?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   updateAboutProject?: Maybe<Scalars['Boolean']>;
+  createWord?: Maybe<Scalars['Boolean']>;
+  updateWord?: Maybe<Scalars['Boolean']>;
+  deleteWord?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -64,12 +79,28 @@ export type MutationUpdateAboutProjectArgs = {
   aboutAuthor?: Maybe<AboutAuthorInput>;
 };
 
+
+export type MutationCreateWordArgs = {
+  wordData: WordCreateData;
+};
+
+
+export type MutationUpdateWordArgs = {
+  wordData: WordUpdateData;
+};
+
+
+export type MutationDeleteWordArgs = {
+  _id: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
   usersCount?: Maybe<Scalars['Int']>;
   tasks?: Maybe<TaskListResult>;
   aboutProject?: Maybe<AboutProjectResult>;
+  word?: Maybe<FindWordResult>;
 };
 
 
@@ -85,6 +116,11 @@ export type QueryTasksArgs = {
   pagination?: Maybe<PaginationParams>;
 };
 
+
+export type QueryWordArgs = {
+  query?: Maybe<WordQuery>;
+};
+
 export type Task = {
   __typename?: 'Task';
   _id?: Maybe<Scalars['ID']>;
@@ -94,6 +130,7 @@ export type Task = {
   level: Scalars['String'];
   points: Scalars['Int'];
   params?: Maybe<ParamsType>;
+  active: Scalars['Boolean'];
 };
 
 export type TaskCreateData = {
@@ -153,6 +190,23 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['String']>;
+};
+
+export type WordCreateData = {
+  rus: Scalars['String'];
+  ing: Scalars['String'];
+};
+
+export type WordQuery = {
+  _id?: Maybe<Scalars['String']>;
+  rus?: Maybe<Scalars['String']>;
+  ing?: Maybe<Scalars['String']>;
+};
+
+export type WordUpdateData = {
+  _id: Scalars['String'];
+  rus?: Maybe<Scalars['String']>;
+  ing?: Maybe<Scalars['String']>;
 };
 
 export type AboutProjectBlock = {
