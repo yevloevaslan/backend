@@ -1,8 +1,8 @@
-import {DictionaryModel} from '../db/models';
-import {conflict} from 'boom';
-import {IDictionary} from '../entities/Dictionary.entity';
+import { DictionaryModel } from '../db/models';
+import { conflict } from 'boom';
+import { IDictionary } from '../entities/Dictionary.entity';
 import Joi from 'joi';
-import {schemaErrorHandler} from '../libs/joiSchemaValidation';
+import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 
 interface createWord {
     rus: string,
@@ -27,7 +27,7 @@ interface booleanResult {
 }
 
 interface findResult {
-    data: IDictionary []
+    data: IDictionary[]
 }
 
 const wordMainSchema = Joi.object({
@@ -36,6 +36,11 @@ const wordMainSchema = Joi.object({
 });
 
 const wordSchema = Joi.object({
+    rus: Joi.string(),
+    ing: Joi.string(),
+});
+const updateWordSchema = Joi.object({
+    _id: Joi.string().required(),
     rus: Joi.string(),
     ing: Joi.string(),
 });
@@ -61,11 +66,14 @@ const createWord = async (data: createWord): Promise<wordResultData> => {
 };
 
 const updateWord = async (data: wordInterface): Promise<booleanResult> => {
-    schemaErrorHandler(wordSchema.validate(data));
+    schemaErrorHandler(updateWordSchema.validate(data));
+    console.log(data)
     const updateData: wordInterface = {};
     if (data.rus) updateData.rus = data.rus;
     if (data.ing) updateData.ing = data.ing;
-    await DictionaryModel.updateOne({_id: data._id}, {$set: updateData});
+    const result = await DictionaryModel.updateOne({ _id: data._id }, { $set: updateData });
+
+    console.log('result', result)
     return {
         data: true,
     };
@@ -73,7 +81,7 @@ const updateWord = async (data: wordInterface): Promise<booleanResult> => {
 
 const deleteWord = async (data: { _id: string }): Promise<booleanResult> => {
     schemaErrorHandler(deleteWordSchema.validate(data));
-    await DictionaryModel.deleteOne({_id: data._id});
+    await DictionaryModel.deleteOne({ _id: data._id });
     return {
         data: true,
     };
@@ -83,10 +91,10 @@ const findWord = async (data: wordInterface): Promise<findResult> => {
     schemaErrorHandler(wordSchema.validate(data));
     let result = [];
     if (data.rus) {
-        result = await DictionaryModel.find({rus: {$regex: `^${data.rus}`}}).limit(10);
+        result = await DictionaryModel.find({ rus: { $regex: `^${data.rus}` } }).limit(10);
     }
     if (data.ing) {
-        result = await DictionaryModel.find({ing: {$regex: `^${data.ing}`}}).limit(10);
+        result = await DictionaryModel.find({ ing: { $regex: `^${data.ing}` } }).limit(10);
     }
     return {
         data: result,
