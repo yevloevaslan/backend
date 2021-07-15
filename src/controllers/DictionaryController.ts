@@ -41,9 +41,10 @@ const wordMainSchema = Joi.object({
 });
 
 const wordSchema = Joi.object({
+    _id: Joi.string(),
     rus: Joi.string(),
     ing: Joi.string(),
-});
+}).unknown();
 const updateWordSchema = Joi.object({
     _id: Joi.string().required(),
     rus: Joi.string(),
