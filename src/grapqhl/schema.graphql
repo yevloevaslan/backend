@@ -3,7 +3,7 @@ type Query {
     usersCount: Int,
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
-    word(query: WordQuery): FindWordResult
+    word(query: WordQuery,  pagination: paginationParams): FindWordResult
 }
 
 type Mutation {
@@ -151,6 +151,10 @@ type IDictionary {
 }
 type FindWordResult {
   data: [IDictionary]
+  meta: WordResultMeta
+}
+type WordResultMeta {
+    count: Int
 }
 
 enum sex {

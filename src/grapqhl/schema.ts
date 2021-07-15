@@ -13,7 +13,7 @@ type Query {
     usersCount: Int,
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
-    word(query: WordQuery): FindWordResult
+    word(query: WordQuery,  pagination: paginationParams): FindWordResult
 }
 
 type Mutation {
@@ -32,13 +32,13 @@ input TasksQuery {
 }
 
 input AboutProjectInput {
-    description: String,
-    photos: [String]
+    description: String!,
+    photos: [String]!
 }
 
 input AboutAuthorInput {
-    description: String,
-    photos: [String]
+    description: String!,
+    photos: [String]!
 }
 
 input paginationParams {
@@ -161,6 +161,10 @@ type IDictionary {
 }
 type FindWordResult {
   data: [IDictionary]
+  meta: WordResultMeta
+}
+type WordResultMeta {
+    count: Int
 }
 
 enum sex {
@@ -227,10 +231,12 @@ export const root = {
         await deleteTask(args._id);
         return true;
     },
-    word: async (args: { query: WordQuery }): Promise<FindWordResult> => {
-        console.log(args.query);
-        const word = await findWord(args.query);
-        return word;
+    word: async (args: { query?: WordQuery, pagination?: PaginationParams}): Promise<FindWordResult> => {
+        const result = await findWord(args.query, { page: args.pagination?.page, limit: args.pagination?.limit });       
+        return {
+            data: result.data,
+            meta: result.meta,
+        };
     },
     createWord: async (args: { wordData: WordCreateData }): Promise<boolean> => {
         const wordData = args.wordData;

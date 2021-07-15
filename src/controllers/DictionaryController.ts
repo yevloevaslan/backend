@@ -3,6 +3,7 @@ import { conflict } from 'boom';
 import { IDictionary } from '../entities/Dictionary.entity';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
+import { paginationParams } from '../libs/checkInputParameters';
 
 interface createWord {
     rus: string,
@@ -25,10 +26,14 @@ interface wordResultData {
 interface booleanResult {
     data: boolean
 }
-
-interface findResult {
-    data: IDictionary[]
+interface WordResultMeta {
+    count: number,
 }
+interface findResult {
+    data: Array<IDictionary>,
+    meta: WordResultMeta
+}
+
 
 const wordMainSchema = Joi.object({
     rus: Joi.string().required(),
@@ -67,13 +72,10 @@ const createWord = async (data: createWord): Promise<wordResultData> => {
 
 const updateWord = async (data: wordInterface): Promise<booleanResult> => {
     schemaErrorHandler(updateWordSchema.validate(data));
-    console.log(data)
     const updateData: wordInterface = {};
     if (data.rus) updateData.rus = data.rus;
     if (data.ing) updateData.ing = data.ing;
-    const result = await DictionaryModel.updateOne({ _id: data._id }, { $set: updateData });
-
-    console.log('result', result)
+    await DictionaryModel.updateOne({ _id: data._id }, { $set: updateData });
     return {
         data: true,
     };
@@ -87,17 +89,21 @@ const deleteWord = async (data: { _id: string }): Promise<booleanResult> => {
     };
 };
 
-const findWord = async (data: wordInterface): Promise<findResult> => {
-    schemaErrorHandler(wordSchema.validate(data));
-    let result = [];
-    if (data.rus) {
-        result = await DictionaryModel.find({ rus: { $regex: `^${data.rus}` } }).limit(10);
-    }
-    if (data.ing) {
-        result = await DictionaryModel.find({ ing: { $regex: `^${data.ing}` } }).limit(10);
-    }
+const findWord = async (query?: wordInterface, options?: { limit?: unknown, page?: unknown }): Promise<findResult> => {
+    schemaErrorHandler(wordSchema.validate(query));
+    const { skip, limit } = paginationParams(options.page, options.limit);
+    const wordQuery: {[key: string]: string} = {};
+    if (query?.rus) wordQuery.rus = query.rus;
+    if (query?.ing) wordQuery.ing = query.ing;
+    const [word, count] = await Promise.all([
+        DictionaryModel.find(wordQuery).skip(skip).limit(limit).lean(),
+        DictionaryModel.countDocuments(wordQuery),
+    ]);
     return {
-        data: result,
+        data: word,
+        meta: {
+            count,
+        },
     };
 };
 
