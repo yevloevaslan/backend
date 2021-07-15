@@ -30,6 +30,7 @@ export type AboutProjectResult = {
 export type FindWordResult = {
   __typename?: 'FindWordResult';
   data?: Maybe<Array<Maybe<IDictionary>>>;
+  meta?: Maybe<WordResultMeta>;
 };
 
 export type IDictionary = {
@@ -119,6 +120,7 @@ export type QueryTasksArgs = {
 
 export type QueryWordArgs = {
   query?: Maybe<WordQuery>;
+  pagination?: Maybe<PaginationParams>;
 };
 
 export type Task = {
@@ -201,6 +203,11 @@ export type WordQuery = {
   _id?: Maybe<Scalars['String']>;
   rus?: Maybe<Scalars['String']>;
   ing?: Maybe<Scalars['String']>;
+};
+
+export type WordResultMeta = {
+  __typename?: 'WordResultMeta';
+  count?: Maybe<Scalars['Int']>;
 };
 
 export type WordUpdateData = {
