@@ -96,6 +96,7 @@ const findWord = async (query?: wordInterface, options?: { limit?: unknown, page
     const wordQuery: {[key: string]: string} = {};
     if (query?.rus) wordQuery.rus = query.rus;
     if (query?.ing) wordQuery.ing = query.ing;
+    if (query._id) wordQuery._id = query._id;
     const [word, count] = await Promise.all([
         DictionaryModel.find(wordQuery).skip(skip).limit(limit).lean(),
         DictionaryModel.countDocuments(wordQuery),
