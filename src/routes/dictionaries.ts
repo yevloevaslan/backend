@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', checkTokenMiddleware('user'), async (req, res, next) => {
     try {
-        const result = await findWord(req.query);
+        const result = await findWord(req.query, { page: req.query.page, limit: req.query.limit });
         res.send(result);
     } catch (err) {
         next(err);
