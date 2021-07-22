@@ -1,5 +1,5 @@
 import schedule from 'node-schedule';
-import {UserModel, FileModel, TaskModel} from './db/models';
+import {UserModel, FileModel, TaskModel, AboutProjectModel} from './db/models';
 import db from './db';
 import moment from 'moment';
 import {deleteObject} from './libs/upload';
@@ -30,11 +30,15 @@ const updateScoreRating = async ():Promise<boolean> => {
                 const files = await FileModel.find({createdAt: {$lte: moment().add(-30, 'minutes')}}).limit(limit).skip(skip);
 
                 for (const file of files) {
-                    const [fileExists1, fileExists2] = await Promise.all([
+                    const [fileExists1, fileExists2, fileExists3] = await Promise.all([
                         UserModel.findOne({img: file.path}, {_id: 1}).lean(),
                         TaskModel.findOne({$or: [{'params.photos': file.path}, {'params.sound': file.path}]}, {_id: 1}).lean(),
+                        AboutProjectModel.findOne({$or: [
+                            {'project.photos': { $in: [file.path] }},
+                            {'author.photos': { $in: [file.path] }}
+                        ]}, {_id: 1}).lean()
                     ]);
-                    if (!fileExists1 && !fileExists2) {
+                    if (!fileExists1 && !fileExists2 && !fileExists3) {
                         await FileModel.deleteOne({_id: file._id});
                         await deleteObject(file.key);
                     }
