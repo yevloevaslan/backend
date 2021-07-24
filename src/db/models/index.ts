@@ -6,6 +6,7 @@ import {DictionaryModel} from './DictionaryModel';
 import {CompletedTaskModel} from './CompletedTask';
 import {FileModel} from './FileModel';
 import {AboutProjectModel} from './AboutProjectModel';
+import {GrammarModel} from './GrammarModel';
 
 export {
     UserModel,
@@ -16,4 +17,5 @@ export {
     CompletedTaskModel,
     FileModel,
     AboutProjectModel,
+    GrammarModel
 };
