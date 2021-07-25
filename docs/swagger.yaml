@@ -133,6 +133,14 @@ paths:
       responses:
         200:
           description: ok
+  /about_projects/grammar:
+    get:
+      tags:
+        - AboutProject
+      summary: Find grammar file
+      responses:
+        200:
+          description: ok
   /dictionaries/:
     get:
       tags:
@@ -151,4 +159,3 @@ paths:
       responses:
         200:
           description: ok
-          
