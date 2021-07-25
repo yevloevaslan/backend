@@ -3,8 +3,9 @@ import { createOrUpdateInformationAboutProject, getInformationAboutProject } fro
 import { createTask, deleteTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
 import { getUsers, updateUserData, usersCount } from '../controllers/UserController';
 import { TaskParams } from '../entities/Task';
-import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput, FindWordResult, WordCreateData, WordUpdateData, WordQuery } from '../types';
+import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput, FindWordResult, WordCreateData, WordUpdateData, WordQuery, GrammarDataResult } from '../types';
 import { findWord, createWord, updateWord, deleteWord } from '../controllers/DictionaryController';
+import { editGrammarFile, getGrammarFile } from '../controllers/GrammarController';
 type UserResolveResult = Array<User>;
 
 export const schema = buildSchema(`
@@ -14,6 +15,7 @@ type Query {
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
     word(query: WordQuery,  pagination: paginationParams): FindWordResult
+    grammar: GrammarDataResult
 }
 
 type Mutation {
@@ -25,6 +27,7 @@ type Mutation {
     createWord(wordData: WordCreateData!): Boolean
     updateWord(wordData: WordUpdateData!): Boolean
     deleteWord(_id: String!): Boolean
+    editGrammar(filename: String!): Boolean
 }
 
 input TasksQuery {
@@ -166,6 +169,12 @@ type FindWordResult {
 type WordResultMeta {
     count: Int
 }
+type GrammarDataResult{
+    data: GrammarData
+}
+type GrammarData {
+    filename: String
+}
 
 enum sex {
     f
@@ -258,5 +267,15 @@ export const root = {
     deleteWord: async (args: { _id: string }): Promise<boolean> => {
         await deleteWord({ _id: args._id });
         return true;
+    },
+    editGrammar: async (args: {filename: string }): Promise<boolean> => {
+        await editGrammarFile(args.filename);
+        return true;
+    },
+    grammar: async (): Promise<GrammarDataResult> => {
+        const result = await getGrammarFile();
+        return {
+            data: result.data
+        };
     },
 };

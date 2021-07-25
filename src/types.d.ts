@@ -33,6 +33,16 @@ export type FindWordResult = {
   meta?: Maybe<WordResultMeta>;
 };
 
+export type GrammarData = {
+  __typename?: 'GrammarData';
+  filename?: Maybe<Scalars['String']>;
+};
+
+export type GrammarDataResult = {
+  __typename?: 'GrammarDataResult';
+  data?: Maybe<GrammarData>;
+};
+
 export type IDictionary = {
   __typename?: 'IDictionary';
   _id?: Maybe<Scalars['String']>;
@@ -50,6 +60,7 @@ export type Mutation = {
   createWord?: Maybe<Scalars['Boolean']>;
   updateWord?: Maybe<Scalars['Boolean']>;
   deleteWord?: Maybe<Scalars['Boolean']>;
+  editGrammar?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -95,6 +106,11 @@ export type MutationDeleteWordArgs = {
   _id: Scalars['String'];
 };
 
+
+export type MutationEditGrammarArgs = {
+  filename: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
@@ -102,6 +118,7 @@ export type Query = {
   tasks?: Maybe<TaskListResult>;
   aboutProject?: Maybe<AboutProjectResult>;
   word?: Maybe<FindWordResult>;
+  grammar?: Maybe<GrammarDataResult>;
 };
 
 

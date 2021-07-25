@@ -4,6 +4,7 @@ type Query {
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
     word(query: WordQuery,  pagination: paginationParams): FindWordResult
+    grammar: GrammarDataResult
 }
 
 type Mutation {
@@ -15,6 +16,7 @@ type Mutation {
     createWord(wordData: WordCreateData!): Boolean
     updateWord(wordData: WordUpdateData!): Boolean
     deleteWord(_id: String!): Boolean
+    editGrammar(filename: String!): Boolean
 }
 
 input TasksQuery {
@@ -155,6 +157,12 @@ type FindWordResult {
 }
 type WordResultMeta {
     count: Int
+}
+type GrammarDataResult{
+    data: GrammarData
+}
+type GrammarData {
+    filename: String
 }
 
 enum sex {
