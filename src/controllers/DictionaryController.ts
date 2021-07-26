@@ -56,6 +56,10 @@ const deleteWordSchema = Joi.object({
 });
 
 const createWord = async (data: createWord): Promise<wordResultData> => {
+    data = {
+        rus: data.rus.toLowerCase(),
+        ing: data.ing.toLowerCase()
+    }
     schemaErrorHandler(wordMainSchema.validate(data));
     const word = await DictionaryModel.findOne(data);
     if (word) {
@@ -64,18 +68,15 @@ const createWord = async (data: createWord): Promise<wordResultData> => {
     }
     await new DictionaryModel(data).save();
     return {
-        data: {
-            rus: data.rus,
-            ing: data.ing,
-        },
+        data
     };
 };
 
 const updateWord = async (data: wordInterface): Promise<booleanResult> => {
     schemaErrorHandler(updateWordSchema.validate(data));
     const updateData: wordInterface = {};
-    if (data.rus) updateData.rus = data.rus;
-    if (data.ing) updateData.ing = data.ing;
+    if (data.rus) updateData.rus = data.rus.toLowerCase();
+    if (data.ing) updateData.ing = data.ing.toLowerCase();
     await DictionaryModel.updateOne({ _id: data._id }, { $set: updateData });
     return {
         data: true,
@@ -94,8 +95,8 @@ const findWord = async (query?: wordInterface, options?: { limit?: unknown, page
     schemaErrorHandler(wordSchema.validate(query));
     const { skip, limit } = paginationParams(options.page, options.limit);
     const wordQuery: {[key: string]: string} = {};
-    if (query?.rus) wordQuery.rus = query.rus;
-    if (query?.ing) wordQuery.ing = query.ing;
+    if (query?.rus) wordQuery.rus = query.rus.toLowerCase();
+    if (query?.ing) wordQuery.ing = query.ing.toLowerCase();
     if (query._id) wordQuery._id = query._id;
     const [word, count] = await Promise.all([
         DictionaryModel.find(wordQuery).skip(skip).limit(limit).lean(),
