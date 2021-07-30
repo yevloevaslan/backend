@@ -30,15 +30,13 @@ const updateScoreRating = async ():Promise<boolean> => {
                 const files = await FileModel.find({createdAt: {$lte: moment().add(-30, 'minutes')}}).limit(limit).skip(skip);
 
                 for (const file of files) {
-                    const [fileExists1, fileExists2, fileExists3] = await Promise.all([
+                    const [fileExists1, fileExists2, fileExists3, fileExists4] = await Promise.all([
                         UserModel.findOne({img: file.path}, {_id: 1}).lean(),
                         TaskModel.findOne({$or: [{'params.photos': file.path}, {'params.sound': file.path}]}, {_id: 1}).lean(),
-                        AboutProjectModel.findOne({$or: [
-                            {'project.photos': { $in: [file.path] }},
-                            {'author.photos': { $in: [file.path] }}
-                        ]}, {_id: 1}).lean()
+                        AboutProjectModel.findOne({$or: [{'project.photos': { $in: [file.path] }}, {'author.photos': { $in: [file.path] }}]}, {_id: 1}).lean(),
+                        AboutProjectModel.findOne({ banner: file.path })
                     ]);
-                    if (!fileExists1 && !fileExists2 && !fileExists3) {
+                    if (!fileExists1 && !fileExists2 && !fileExists3 && !fileExists4) {
                         await FileModel.deleteOne({_id: file._id});
                         await deleteObject(file.key);
                     }

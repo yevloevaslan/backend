@@ -6,5 +6,6 @@ export interface IAboutProject {
     author: {
         photos: string[],
         description: string,
-    }
+    },
+    banner: string
 }

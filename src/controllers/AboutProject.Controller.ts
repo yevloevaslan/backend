@@ -11,7 +11,9 @@ interface InputDataInformationAboutProject {
         photos: string[],
         description: string,
     }
+    banner?: string
 }
+
 interface getInfoResult {
     data: IAboutProject
 }
@@ -26,6 +28,7 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
         const updateData: InputDataInformationAboutProject = {};
         if (data.project) updateData.project = data.project;
         if (data.author) updateData.author = data.author;
+        if ('banner' in data) updateData.banner = data.banner;
         await AboutProjectModel.updateOne({_id: result._id}, {$set: updateData});
     } else {
         await new AboutProjectModel(data).save();
@@ -34,7 +37,8 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
         data: {
             project: data.project,
             author: data.author,
-        },
+            banner: data.banner
+        }
     };
 };
 
@@ -50,6 +54,7 @@ const getInformationAboutProject = async(): Promise<getInfoResult> =>{
                 description: '',
                 photos: [],
             },
+            banner: ''
         },
     };
     return {
