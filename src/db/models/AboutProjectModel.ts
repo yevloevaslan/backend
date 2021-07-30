@@ -10,6 +10,7 @@ const AboutProject = new Schema({
         photos: [String],
         description: String, 
     },
+    banner: String
 });
 
 export const AboutProjectModel = model<Document&IAboutProject>('about_project', AboutProject);
