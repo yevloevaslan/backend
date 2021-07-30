@@ -37,8 +37,8 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
         data: {
             project: data.project,
             author: data.author,
-            banner: data.banner
-        }
+            banner: data.banner,
+        },
     };
 };
 
@@ -54,7 +54,7 @@ const getInformationAboutProject = async(): Promise<getInfoResult> =>{
                 description: '',
                 photos: [],
             },
-            banner: ''
+            banner: '',
         },
     };
     return {

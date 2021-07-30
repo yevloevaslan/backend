@@ -34,7 +34,7 @@ const updateScoreRating = async ():Promise<boolean> => {
                         UserModel.findOne({img: file.path}, {_id: 1}).lean(),
                         TaskModel.findOne({$or: [{'params.photos': file.path}, {'params.sound': file.path}]}, {_id: 1}).lean(),
                         AboutProjectModel.findOne({$or: [{'project.photos': { $in: [file.path] }}, {'author.photos': { $in: [file.path] }}]}, {_id: 1}).lean(),
-                        AboutProjectModel.findOne({ banner: file.path })
+                        AboutProjectModel.findOne({ banner: file.path }),
                     ]);
                     if (!fileExists1 && !fileExists2 && !fileExists3 && !fileExists4) {
                         await FileModel.deleteOne({_id: file._id});

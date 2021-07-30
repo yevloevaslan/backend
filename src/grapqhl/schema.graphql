@@ -4,7 +4,8 @@ type Query {
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
     word(query: WordQuery,  pagination: paginationParams): FindWordResult
-    grammar: GrammarDataResult
+    grammar: GrammarDataResult,
+
 }
 
 type Mutation {
@@ -12,7 +13,7 @@ type Mutation {
     createTask(taskData: TaskCreateData!): Boolean,
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
-    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
+    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput, banner: String): Boolean
     createWord(wordData: WordCreateData!): Boolean
     updateWord(wordData: WordUpdateData!): Boolean
     deleteWord(_id: String!): Boolean
@@ -97,6 +98,7 @@ input WordUpdateData {
 type AboutProjectResult {
     project: aboutProjectBlock
     author: aboutProjectBlock
+    banner: String,
 }
 
 type aboutProjectBlock {
