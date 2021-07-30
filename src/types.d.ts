@@ -25,6 +25,7 @@ export type AboutProjectResult = {
   __typename?: 'AboutProjectResult';
   project?: Maybe<AboutProjectBlock>;
   author?: Maybe<AboutProjectBlock>;
+  banner?: Maybe<Scalars['String']>;
 };
 
 export type FindWordResult = {
@@ -89,6 +90,7 @@ export type MutationDeleteTaskArgs = {
 export type MutationUpdateAboutProjectArgs = {
   aboutProject?: Maybe<AboutProjectInput>;
   aboutAuthor?: Maybe<AboutAuthorInput>;
+  banner?: Maybe<Scalars['String']>;
 };
 
 

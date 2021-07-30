@@ -15,7 +15,8 @@ type Query {
     tasks(type: String!, query: TasksQuery, pagination: paginationParams): TaskListResult,
     aboutProject: AboutProjectResult,
     word(query: WordQuery,  pagination: paginationParams): FindWordResult
-    grammar: GrammarDataResult
+    grammar: GrammarDataResult,
+
 }
 
 type Mutation {
@@ -23,7 +24,7 @@ type Mutation {
     createTask(taskData: TaskCreateData!): Boolean,
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
-    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput): Boolean
+    updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput, banner: String): Boolean
     createWord(wordData: WordCreateData!): Boolean
     updateWord(wordData: WordUpdateData!): Boolean
     deleteWord(_id: String!): Boolean
@@ -108,6 +109,7 @@ input WordUpdateData {
 type AboutProjectResult {
     project: aboutProjectBlock
     author: aboutProjectBlock
+    banner: String,
 }
 
 type aboutProjectBlock {
@@ -195,8 +197,8 @@ export const root = {
         const { data: aboutProject } = await getInformationAboutProject();
         return aboutProject;
     },
-    updateAboutProject: async (args: { aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput }): Promise<boolean> => {
-        await createOrUpdateInformationAboutProject({ author: args.aboutAuthor, project: args.aboutProject });
+    updateAboutProject: async (args: { aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput, banner: string }): Promise<boolean> => {
+        await createOrUpdateInformationAboutProject({ author: args.aboutAuthor, project: args.aboutProject, banner: args.banner});
         return true;
     },
     updateUser: async (args: { id: string, data: UpdateUserData }): Promise<boolean> => {
@@ -275,7 +277,7 @@ export const root = {
     grammar: async (): Promise<GrammarDataResult> => {
         const result = await getGrammarFile();
         return {
-            data: result.data
+            data: result.data,
         };
     },
 };
