@@ -7,8 +7,10 @@ import UserClass from './classes/UserClass';
 import { paginationParams } from '../libs/checkInputParameters';
 import { UserModel } from '../db/models';
 import moment from 'moment';
-import { badRequest } from 'boom';
+import { badGateway, badRequest } from 'boom';
 import { userUpdateInterface } from './interfaces';
+import needle from 'needle';
+import config from '../config';
 
 interface confirmLoginResult {
     data: {
@@ -40,6 +42,8 @@ interface voidResult {
     data: null,
 }
 
+const fakePhones = ['+79991111111', '+79992222222', '+79993333333'];
+
 const loginInputSchema = Joi.object({
     phone: Joi.string().required().pattern(/^((\+7)+([0-9]){10})$/),
 });
@@ -58,11 +62,17 @@ const userUpdateInputSchema = Joi.object({
     sex: Joi.string().valid('f', 'm'),
 });
 
-const login = async (data: {phone?: unknown}): Promise<loginResult> => {
+const login = async (data: {phone?: string}): Promise<loginResult> => {
     schemaErrorHandler(loginInputSchema.validate(data));
     const confirmCode = await ConfirmCode({phone: String(data.phone)});
-    await confirmCode.generateCode();
-    //sendcode
+    if (fakePhones.includes(data.phone)) {
+        await confirmCode.generateCode(true);
+    } else {
+        await confirmCode.generateCode();
+        const succesSend = await sendSms(String(data.phone), confirmCode.data.code);
+        if (!succesSend) throw badGateway('Sms service error');
+    }
+
     return {
         data: {
             _id: confirmCode.data._id,
@@ -128,6 +138,17 @@ const usersCount = async (): Promise<usersCountResult> => {
             count,
         },
     };
+};
+
+const sendSms = async(phone: string, code: string): Promise<boolean>=>{
+    phone = parseInt(phone).toString();
+    const text = `Код подтверждения ${code}`;
+    const uri = `${config.smsServiceUri}?api_id=${config.smsApiID}&to=${phone}&msg=${text}&json=1`;
+    const result = await needle('get', encodeURI(uri));
+    if (100 <= parseInt(result?.body?.status_code) && parseInt(result?.body?.status_code)<= 103) {
+        return true;
+    }
+    return false;
 };
 
 export {
