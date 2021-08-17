@@ -10,9 +10,13 @@ export default class ConfirmCodeClass {
     }
 
 
-    async generateCode(): Promise<void> {
+    async generateCode(fake?: boolean): Promise<void> {
         //check updatedAt confirmCode
-        this.confirmCode.code = generateCode();
+        if (fake) {
+            this.confirmCode.code = '000000';
+        } else {
+            this.confirmCode.code = generateCode();
+        }
         await this.confirmCode.save();
     }
 
