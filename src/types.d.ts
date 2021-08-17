@@ -51,11 +51,32 @@ export type IDictionary = {
   ing?: Maybe<Scalars['String']>;
 };
 
+export type MultiAnswerTaskCreateData = {
+  title: Scalars['String'];
+  description: Scalars['String'];
+  type: Scalars['String'];
+  level: Scalars['String'];
+  points: Scalars['Int'];
+  params: MultiAnswerParams;
+  active: Scalars['Boolean'];
+};
+
+export type MultiAnswerTaskUpdateData = {
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  level?: Maybe<Scalars['String']>;
+  points?: Maybe<Scalars['Int']>;
+  params?: Maybe<MultiAnswerParams>;
+  active?: Maybe<Scalars['Boolean']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser?: Maybe<Scalars['Boolean']>;
   createTask?: Maybe<Scalars['Boolean']>;
+  createTaskMultiAnswer?: Maybe<Scalars['Boolean']>;
   updateTask?: Maybe<Scalars['Boolean']>;
+  updateTaskMultiAnswer?: Maybe<Scalars['Boolean']>;
   deleteTask?: Maybe<Scalars['Boolean']>;
   updateAboutProject?: Maybe<Scalars['Boolean']>;
   createWord?: Maybe<Scalars['Boolean']>;
@@ -76,9 +97,20 @@ export type MutationCreateTaskArgs = {
 };
 
 
+export type MutationCreateTaskMultiAnswerArgs = {
+  taskData: MultiAnswerTaskCreateData;
+};
+
+
 export type MutationUpdateTaskArgs = {
   _id: Scalars['String'];
   taskData: TaskUpdateData;
+};
+
+
+export type MutationUpdateTaskMultiAnswerArgs = {
+  _id: Scalars['String'];
+  taskData: MultiAnswerTaskUpdateData;
 };
 
 
@@ -239,6 +271,12 @@ export type AboutProjectBlock = {
   __typename?: 'aboutProjectBlock';
   photos?: Maybe<Array<Maybe<Scalars['String']>>>;
   description?: Maybe<Scalars['String']>;
+};
+
+export type MultiAnswerParams = {
+  answers?: Maybe<Array<Maybe<Scalars['String']>>>;
+  sound?: Maybe<Scalars['String']>;
+  answerArray: Array<Maybe<Scalars['String']>>;
 };
 
 export type PaginationParams = {

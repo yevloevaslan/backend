@@ -40,7 +40,7 @@ interface getTaskResult {
 interface checkTaskResult {
     data: {
         trueResult: boolean,
-        answer: string,
+        answer: string | string[],
     },
 }
 
@@ -99,7 +99,7 @@ const taskUpdateInputSchema = Joi.object({
 
 const test = Joi.object({
     _id: Joi.string().required(),
-    answer: Joi.string().required(),
+    answer: Joi.alternatives().try(Joi.array().items(Joi.string()), Joi.string()),
 });
 
 const randomTaskSchema = Joi.object({
@@ -157,6 +157,7 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
     const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw notFound('No tasks for user');
     delete randomTask.params.answer;
+    delete randomTask.params.answerArray;
     return {
         data: {
             task: randomTask,
@@ -168,6 +169,7 @@ const getTask = async (_id: string): Promise<getTaskResult> => {
     const task = await TaskFactory(null, _id);
     const data = task.data();
     delete data.params.answer;
+    delete data.params.answerArray;
     return {
         data: {
             task: data,
