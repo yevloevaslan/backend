@@ -7,5 +7,5 @@ export interface TaskClassInterface {
   createTask(data: taskDataInterface<TaskParams>): void;
   updateTask(data: updateTaskData): void;
   data(): ITask<TaskParams>;
-  getAnswer(): string,
+  getAnswer(): string | string[],
 }

@@ -4,14 +4,14 @@ import { taskDataInterface } from '../interfaces';
 import { TaskClassInterface } from '../interfaces/Task';
 import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
-import { conflict } from 'boom';
+import { badData, conflict } from 'boom';
 import { Document } from 'mongoose';
 import { setValuesToUpdate } from './functions/setValuesToUpdate';
 
 const taskParamsSchema = Joi.object({
     sound: Joi.string().required(),
     answers: Joi.array().items(Joi.string()).required().min(2),
-    answer: Joi.string().required(),
+    answerArray: Joi.array().items(Joi.string()).required().min(1),
 }).unknown();
 
 export default class TaskThreeClass implements TaskClassInterface {
@@ -21,13 +21,25 @@ export default class TaskThreeClass implements TaskClassInterface {
         this.task = task ;
     }
 
-    getAnswer(): string {
-        return this.task.params.answer;
+    getAnswer(): string[] {
+        return this.task.params.answerArray;
     }
 
-    checkTask(value: unknown): boolean {
-        if (value === this.task.params.answer) return true;
-        return false;
+    checkTask(value: string[]): boolean {
+        if (value.length !== this.task.params.answerArray.length) return false;
+        for (const answer of value) {
+            console.log(this.task.params.answerArray, answer);
+            if (!this.task.params.answerArray.includes(answer)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static validateCorrectAnswer(answers: string[], variants: string[]): void {
+        for (const ans of answers) {
+            if (!variants.includes(ans)) throw badData('answer not in answers array');
+        }
     }
 
     async createTask(data: taskDataInterface<TaskThree>): Promise<void> {
@@ -36,6 +48,9 @@ export default class TaskThreeClass implements TaskClassInterface {
             throw conflict('Задание уже существует.');
         }
         schemaErrorHandler(taskParamsSchema.validate(data.params));
+
+        TaskThreeClass.validateCorrectAnswer(data.params.answerArray, data.params.answers);
+
         this.task = await new TaskModel(data).save();
     }
 
@@ -43,6 +58,8 @@ export default class TaskThreeClass implements TaskClassInterface {
         setValuesToUpdate(this, data);
         if (data.params) {
             schemaErrorHandler(taskParamsSchema.validate(data.params));
+
+            TaskThreeClass.validateCorrectAnswer(data.params.answerArray, data.params.answers);
             this.task.params = data.params;
         }
         await this.task.save();
