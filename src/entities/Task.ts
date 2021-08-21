@@ -45,4 +45,3 @@ export interface TaskFive {//заполните пропуск
 }
 
 export type TaskParams = TaskOne | TaskTwo | TaskThree | TaskFour | TaskFive;
-export type MultiAnswerTaskParams = TaskThree;

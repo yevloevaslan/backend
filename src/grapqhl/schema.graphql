@@ -11,9 +11,7 @@ type Query {
 type Mutation {
     updateUser(_id: String, data: UpdateUserData!): Boolean,
     createTask(taskData: TaskCreateData!): Boolean,
-    createTaskMultiAnswer(taskData: MultiAnswerTaskCreateData!): Boolean,
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
-    updateTaskMultiAnswer(_id: String!, taskData: MultiAnswerTaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
     updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput, banner: String): Boolean
     createWord(wordData: WordCreateData!): Boolean
@@ -49,14 +47,7 @@ input TaskUpdateData {
     params: params,
     active: Boolean
 }
-input MultiAnswerTaskUpdateData {
-    title: String,
-    description: String,
-    level: String,
-    points: Int,
-    params: multiAnswerParams,
-    active: Boolean
-}
+
 
 input TaskCreateData {
     title: String!,
@@ -68,27 +59,13 @@ input TaskCreateData {
     active: Boolean!
 }
 
-input MultiAnswerTaskCreateData {
-    title: String!,
-    description: String!,
-    type: String!,
-    level: String!,
-    points: Int!,
-    params: multiAnswerParams!,
-    active: Boolean!
-}
-
 input params {
     answers: [String],
     photos: [String],
     sound: String,
     text: String,
-    answer: String!
-}
-input multiAnswerParams {
-    answers: [String],
-    sound: String,
-    answerArray: [String]!
+    answer: String
+    answerArray: [String]
 }
 
 input UpdateUserData {
