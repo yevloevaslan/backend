@@ -144,7 +144,8 @@ type paramsType {
     photos: [String],
     sound: String,
     text: String,
-    answer: String!
+    answer: String,
+    answerArray: [String]
 }
 
 type User {

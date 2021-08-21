@@ -261,7 +261,8 @@ export type ParamsType = {
   photos?: Maybe<Array<Maybe<Scalars['String']>>>;
   sound?: Maybe<Scalars['String']>;
   text?: Maybe<Scalars['String']>;
-  answer: Scalars['String'];
+  answer?: Maybe<Scalars['String']>;
+  answerArray?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export enum Sex {
