@@ -2,8 +2,8 @@ import { buildSchema } from 'graphql';
 import { createOrUpdateInformationAboutProject, getInformationAboutProject } from '../controllers/AboutProject.Controller';
 import { createTask, deleteTask, getTasks, TaskResultData, TaskResultMeta, updateTask } from '../controllers/TaskControllers';
 import { getUsers, updateUserData, usersCount } from '../controllers/UserController';
-import { TaskParams, MultiAnswerTaskParams} from '../entities/Task';
-import { UpdateUserData, User, TaskCreateData, MultiAnswerTaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, MultiAnswerTaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput, FindWordResult, WordCreateData, WordUpdateData, WordQuery, GrammarDataResult } from '../types';
+import { TaskParams } from '../entities/Task';
+import { UpdateUserData, User, TaskCreateData, PaginationParams, TasksQuery, TaskUpdateData, AboutProjectResult, AboutAuthorInput, AboutProjectInput, FindWordResult, WordCreateData, WordUpdateData, WordQuery, GrammarDataResult } from '../types';
 import { findWord, createWord, updateWord, deleteWord } from '../controllers/DictionaryController';
 import { editGrammarFile, getGrammarFile } from '../controllers/GrammarController';
 type UserResolveResult = Array<User>;
@@ -22,9 +22,7 @@ type Query {
 type Mutation {
     updateUser(_id: String, data: UpdateUserData!): Boolean,
     createTask(taskData: TaskCreateData!): Boolean,
-    createTaskMultiAnswer(taskData: MultiAnswerTaskCreateData!): Boolean,
     updateTask(_id: String!, taskData: TaskUpdateData!): Boolean
-    updateTaskMultiAnswer(_id: String!, taskData: MultiAnswerTaskUpdateData!): Boolean
     deleteTask(_id: String!): Boolean
     updateAboutProject(aboutProject: AboutProjectInput, aboutAuthor: AboutAuthorInput, banner: String): Boolean
     createWord(wordData: WordCreateData!): Boolean
@@ -60,14 +58,7 @@ input TaskUpdateData {
     params: params,
     active: Boolean
 }
-input MultiAnswerTaskUpdateData {
-    title: String,
-    description: String,
-    level: String,
-    points: Int,
-    params: multiAnswerParams,
-    active: Boolean
-}
+
 
 input TaskCreateData {
     title: String!,
@@ -79,27 +70,13 @@ input TaskCreateData {
     active: Boolean!
 }
 
-input MultiAnswerTaskCreateData {
-    title: String!,
-    description: String!,
-    type: String!,
-    level: String!,
-    points: Int!,
-    params: multiAnswerParams!,
-    active: Boolean!
-}
-
 input params {
     answers: [String],
     photos: [String],
     sound: String,
     text: String,
-    answer: String!
-}
-input multiAnswerParams {
-    answers: [String],
-    sound: String,
-    answerArray: [String]!
+    answer: String
+    answerArray: [String]
 }
 
 input UpdateUserData {
@@ -243,19 +220,6 @@ export const root = {
         });
         return true;
     },
-    createTaskMultiAnswer: async (args: { taskData: MultiAnswerTaskCreateData }): Promise<boolean> => {
-        const taskData = args.taskData;
-        await createTask({
-            points: taskData.points,
-            description: taskData.description,
-            level: taskData.level,
-            title: taskData.title,
-            type: taskData.type,
-            params: taskData.params as MultiAnswerTaskParams,
-            active: taskData.active,
-        });
-        return true;
-    },
 
     tasks: async (args: { pagination: PaginationParams, type: string, query: TasksQuery }): Promise<{ list: Array<TaskResultData>, meta: TaskResultMeta }> => {
         const result = await getTasks({ type: args.type, _id: args.query?._id }, { page: args.pagination?.page, limit: args.pagination?.limit });
@@ -276,18 +240,7 @@ export const root = {
         });
         return true;
     },
-    updateTaskMultiAnswer: async (args: { _id: string, taskData: MultiAnswerTaskUpdateData }): Promise<boolean> => {
-        const taskData = args.taskData;
-        await updateTask(args._id, {
-            points: taskData.points,
-            description: taskData.description,
-            level: taskData.level,
-            title: taskData.title,
-            params: taskData.params as MultiAnswerTaskParams,
-            active: taskData.active,
-        });
-        return true;
-    },
+
     deleteTask: async (args: { _id: string }): Promise<boolean> => {
         await deleteTask(args._id);
         return true;
