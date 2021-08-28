@@ -12,7 +12,7 @@ const s3 = new S3({
 
 export const upload = (): Multer => {
     return multer({
-        limits: {fileSize: 20 * 1024 * 1024},
+        limits: {fileSize: 50 * 1024 * 1024},
         storage: multerS3({
             s3: s3,
             bucket: awsBucketName,
