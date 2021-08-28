@@ -14,7 +14,7 @@ import { createFile } from '../controllers/FileController';
 import { upload } from '../libs/upload';
 const NODE_ENV = process.env.NODE_ENV;
 
-adminApp.use(express.json({ limit: '1mb' }));
+adminApp.use(express.json({ limit: '50mb' }));
 adminApp.use(cookieParser());
 
 adminApp.post('/api/admin/login', async (req, res, next) => {
