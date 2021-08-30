@@ -43,7 +43,12 @@ adminApp.post('/api/admin/upload', checkTokenMiddleware('admin'),
                 throw badRequest('File is missing');
             }
             console.log(req.file);
-            const {location: path, key} = req.file as unknown as Record<'location'|'key', string>;
+            const { key } = req.file as unknown as Record<'location'|'key', string>;
+            let {location: path} = req.file as unknown as Record<'location'|'key', string>;
+            const prefix = 'https://';
+            if (path.substr(0, prefix.length) !== prefix) {
+                path = prefix + path;
+            }
             res.send({
                 data: {
                     path,
