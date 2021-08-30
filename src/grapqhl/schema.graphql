@@ -83,11 +83,15 @@ input WordQuery {
     _id: String
     rus: String
     ing: String
+    ingDescription: String
+    rusDescription: String
 }
 
 input WordCreateData {
     rus: String!,
     ing: String!,
+    ingDescription: String,
+    rusDescription: String,
 }
 
 input WordUpdateData {

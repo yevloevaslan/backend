@@ -8,6 +8,8 @@ import { paginationParams } from '../libs/checkInputParameters';
 interface createWord {
     rus: string,
     ing: string,
+    ingDescription?: string,
+    rusDescription?: string,
 }
 
 interface wordInterface {
@@ -38,6 +40,8 @@ interface findResult {
 const wordMainSchema = Joi.object({
     rus: Joi.string().required(),
     ing: Joi.string().required(),
+    ingDescription: Joi.string(),
+    rusDescription: Joi.string(),
 });
 
 const wordSchema = Joi.object({
@@ -58,17 +62,26 @@ const deleteWordSchema = Joi.object({
 const createWord = async (data: createWord): Promise<wordResultData> => {
     data = {
         rus: data.rus.toLowerCase(),
-        ing: data.ing.toLowerCase()
-    }
+        ing: data.ing.toLowerCase(),
+        ingDescription: data.ingDescription ? data.ingDescription.toLowerCase() : null,
+        rusDescription: data.rusDescription ? data.rusDescription.toLowerCase() : null,
+    };
+    if (data.ingDescription === null) delete data.ingDescription;
+    if (data.rusDescription === null) delete data.rusDescription;
     schemaErrorHandler(wordMainSchema.validate(data));
-    const word = await DictionaryModel.findOne(data);
+    const findData = {
+        rus: data.rus,
+        ing: data.ing,
+    };
+    
+    const word = await DictionaryModel.findOne(findData);
     if (word) {
         console.error('Conflict in creating word');
         throw conflict('Слово уже существует');
     }
     await new DictionaryModel(data).save();
     return {
-        data
+        data,
     };
 };
 

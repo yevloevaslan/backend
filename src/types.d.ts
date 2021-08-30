@@ -216,12 +216,16 @@ export type User = {
 export type WordCreateData = {
   rus: Scalars['String'];
   ing: Scalars['String'];
+  ingDescription?: Maybe<Scalars['String']>;
+  rusDescription?: Maybe<Scalars['String']>;
 };
 
 export type WordQuery = {
   _id?: Maybe<Scalars['String']>;
   rus?: Maybe<Scalars['String']>;
   ing?: Maybe<Scalars['String']>;
+  ingDescription?: Maybe<Scalars['String']>;
+  rusDescription?: Maybe<Scalars['String']>;
 };
 
 export type WordResultMeta = {

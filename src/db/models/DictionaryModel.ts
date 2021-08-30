@@ -10,6 +10,8 @@ const Dictionary = new Schema({
         type: String,
         required: true,
     },
+    ingDescription: String,
+    rusDescription: String,
 });
 
 export const DictionaryModel = model<IDictionary&Document>('dictionary', Dictionary);
