@@ -108,8 +108,8 @@ const findWord = async (query?: wordInterface, options?: { limit?: unknown, page
     schemaErrorHandler(wordSchema.validate(query));
     const { skip, limit } = paginationParams(options.page, options.limit);
     const wordQuery: Record<string, RegExp | string> = {};
-    if (query?.rus) wordQuery.rus = new RegExp(`${query.rus.toLowerCase()}*`);
-    if (query?.ing) wordQuery.ing = new RegExp(`${query.ing.toLowerCase()}*`);
+    if (query?.rus) wordQuery.rus = new RegExp(`^${query.rus.toLowerCase()}`);
+    if (query?.ing) wordQuery.ing = new RegExp(`^${query.ing.toLowerCase()}`);
     if (query._id) wordQuery._id = query._id;
     const [word, count] = await Promise.all([
         DictionaryModel.find(wordQuery).skip(skip).limit(limit).lean(),
