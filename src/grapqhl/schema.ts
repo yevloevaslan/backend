@@ -94,11 +94,15 @@ input WordQuery {
     _id: String
     rus: String
     ing: String
+    ingDescription: String
+    rusDescription: String
 }
 
 input WordCreateData {
     rus: String!,
     ing: String!,
+    ingDescription: String,
+    rusDescription: String,
 }
 
 input WordUpdateData {
@@ -258,6 +262,8 @@ export const root = {
         await createWord({
             rus: wordData.rus,
             ing: wordData.ing,
+            ingDescription: wordData.ingDescription,
+            rusDescription: wordData.rusDescription,
         });
         return true;
     },
