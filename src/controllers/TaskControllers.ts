@@ -116,7 +116,7 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 
     const task = await TaskFactory(null, _id);
     let trueResult = false;
-
+    console.log(task.data, answer);
     if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
         await new CompletedTaskModel({userId: user._id, taskId: _id, correct: true}).save();
