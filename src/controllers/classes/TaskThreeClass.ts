@@ -69,9 +69,7 @@ export default class TaskThreeClass implements TaskClassInterface {
     data(): ITask<TaskThree> {
         return {
             _id: this.task._id,
-            title: this.task.title,
             type: this.task.type,
-            description: this.task.description,
             points: this.task.points,
             level: this.task.level,
             params: this.task.params as TaskThree,

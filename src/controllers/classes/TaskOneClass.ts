@@ -53,9 +53,7 @@ export default class TaskOneClass implements TaskClassInterface {
     data(): ITask<TaskOne> {
         return {
             _id: this.task._id,
-            title: this.task.title,
             type: this.task.type,
-            description: this.task.description,
             points: this.task.points,
             level: this.task.level,
             params: this.task.params as unknown as TaskOne,

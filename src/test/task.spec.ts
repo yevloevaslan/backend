@@ -58,8 +58,6 @@ describe('Tasks', () => {
     it('give random task to user', async () => {
         for (let i = 1; i < 3; i++) {
             await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
                 type: '1',
                 level: '1',
                 points: 1,
@@ -71,8 +69,6 @@ describe('Tasks', () => {
                 active: true,
             });
             await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
                 type: '2',
                 level: '1',
                 points: 1,
@@ -84,8 +80,6 @@ describe('Tasks', () => {
                 active: true,
             });
             await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
                 type: '3',
                 level: '1',
                 points: 1,
@@ -97,8 +91,6 @@ describe('Tasks', () => {
                 active: true,
             });
             await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
                 type: '4',
                 level: '1',
                 points: 1,
@@ -109,8 +101,6 @@ describe('Tasks', () => {
                 active: true,
             });
             await createTask({
-                title: `Test title ${i}`,
-                description: `Test description ${i}`,
                 type: '5',
                 level: '1',
                 points: 1,
@@ -163,8 +153,6 @@ describe('Tasks', () => {
             .expect(404);
         // get by specific level
         await createTask({
-            title: 'Test title 3',
-            description: 'Test description 3',
             type: '5',
             level: '3',
             points: 1,

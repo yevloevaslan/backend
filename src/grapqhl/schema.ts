@@ -216,9 +216,7 @@ export const root = {
         const taskData = args.taskData;
         await createTask({
             points: taskData.points,
-            description: taskData.description,
             level: taskData.level,
-            title: taskData.title,
             type: taskData.type,
             params: taskData.params as TaskParams,
             active: taskData.active,
@@ -237,9 +235,7 @@ export const root = {
         const taskData = args.taskData;
         await updateTask(args._id, {
             points: taskData.points,
-            description: taskData.description,
             level: taskData.level,
-            title: taskData.title,
             params: taskData.params as TaskParams,
             active: taskData.active,
         });

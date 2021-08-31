@@ -12,8 +12,6 @@ import {conflict, notFound} from 'boom';
 
 export interface TaskResultData {
     _id: string,
-    title: string,
-    description: string,
     type: string,
     level: string,
     points: number,
@@ -50,8 +48,6 @@ interface voidResult {
 
 interface creatTask {
     data: {
-        title: string,
-        description: string,
         type: string,
         level: string,
         points: number,
@@ -60,8 +56,6 @@ interface creatTask {
 }
 
 export interface updateTaskData {
-    title?: string,
-    description?: string,
     level?: string,
     points?: number,
     params?: TaskParams,
@@ -80,8 +74,6 @@ interface randomTask {
 }
 
 const taskMainSchema = Joi.object({
-    title: Joi.string(),
-    description: Joi.string(),
     type: Joi.string().min(1).max(5).required(),
     level: Joi.string().min(0).max(2).required(),
     points: Joi.number().required(),
@@ -89,13 +81,11 @@ const taskMainSchema = Joi.object({
 }).unknown();
 
 const taskUpdateInputSchema = Joi.object({
-    title: Joi.string(),
-    description: Joi.string(),
     level: Joi.string(),
     points: Joi.number(),
     params: Joi.object(),
     active: Joi.boolean(),
-});
+}).unknown();
 
 const test = Joi.object({
     _id: Joi.string().required(),
@@ -113,8 +103,6 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
     await TaskFactory(data);
     return {
         data: {
-            title: data.title,
-            description: data.description,
             type: data.type,
             level: data.level,
             points: data.points,

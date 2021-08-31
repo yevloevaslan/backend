@@ -2,12 +2,6 @@ import { Schema, Document, model } from 'mongoose';
 import { ITask, TaskParams } from '../../entities/Task';
 
 export const Task = new Schema({
-    title: {
-        type: String,
-    },
-    description: {
-        type: String,
-    },
     type: {
         type: String,
         required: true,

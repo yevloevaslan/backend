@@ -52,9 +52,7 @@ export default class TaskFiveClass implements TaskClassInterface {
     data(): ITask<TaskFive> {
         return {
             _id: this.task._id,
-            title: this.task.title,
             type: this.task.type,
-            description: this.task.description,
             points: this.task.points,
             level: this.task.level,
             params: this.task.params as TaskFive,
