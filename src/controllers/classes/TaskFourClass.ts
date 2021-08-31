@@ -6,7 +6,7 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../../libs/joiSchemaValidation';
 import { conflict } from 'boom';
 import { Document } from 'mongoose';
-import { setValuesToUpdate } from './functions/setValuesToUpdate';
+import { baseCheckAnswer, setValuesToUpdate } from './functions/setValuesToUpdate';
 
 const taskParamsSchema = Joi.object({
     sound: Joi.string().required(),
@@ -25,7 +25,7 @@ export default class TaskFourClass implements TaskClassInterface {
     }
 
     checkTask(value: unknown): boolean {
-        if (value === this.task.params.answer) return true;
+        if (baseCheckAnswer(this.task.params.answer, value)) return true;
         return false;
     }
 

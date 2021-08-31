@@ -7,6 +7,9 @@ const setValuesToUpdate = function (context: any, data: taskDataInterface<any>):
     return;
 };
 
+const baseCheckAnswer = (answer: unknown, value: unknown): boolean => String(value).toLowerCase() === String(answer).toLowerCase();
+
 export {
     setValuesToUpdate,
+    baseCheckAnswer,
 };
