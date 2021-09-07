@@ -27,11 +27,8 @@ export default class TaskThreeClass implements TaskClassInterface {
 
     checkTask(value: string[]): boolean {
         if (value.length !== this.task.params.answerArray.length) return false;
-        for (const answer of value) {
-            console.log(this.task.params.answerArray, answer);
-            if (!this.task.params.answerArray.includes(answer)) {
-                return false;
-            }
+        for (let i = 0; i < value.length; i++) {
+            if (value[i] !== this.task.params.answerArray[i]) return false;
         }
         return true;
     }
