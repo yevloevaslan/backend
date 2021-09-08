@@ -166,12 +166,12 @@ const getTask = async (_id: string): Promise<getTaskResult> => {
 };
 
 const getTasks = async (query: { type?: string, _id?: string }, options: { limit?: unknown, page?: unknown }): Promise<getTasksResult> => {
-    paginationParams(options.page, options.limit);
+    const { skip, limit } = paginationParams(options.page, options.limit);
     const taskQuery: {[key: string]: string} = {};
     if (query.type) taskQuery.type = query.type;
     if (query._id) taskQuery._id = query._id;
     const [tasks, count] = await Promise.all([
-        TaskModel.find(taskQuery).skip(0).limit(1000).lean(),
+        TaskModel.find(taskQuery).skip(skip).limit(limit).lean(),
         TaskModel.countDocuments(taskQuery),
     ]);
 
