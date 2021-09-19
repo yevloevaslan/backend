@@ -5,7 +5,6 @@ import db from '../db';
 db();
 import {schema, root} from './schema';
 import cookieParser from 'cookie-parser';
-import { checkTokenMiddleware } from '../routes/middlewares/auth.middleware';
 import { apiErrorHandler } from '../libs/errorHandler';
 import {login} from '../controllers/AdminController';
 import Boom from 'boom';
@@ -30,7 +29,7 @@ adminApp.post('/api/admin/login', async (req, res, next) => {
     }
 });
 
-adminApp.post('/api/admin/upload', checkTokenMiddleware('admin'),
+adminApp.post('/api/admin/upload',
     async (req, res, next) => {
         try {
             upload().single('file')(req, res, next);

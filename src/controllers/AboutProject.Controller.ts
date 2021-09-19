@@ -43,7 +43,7 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
 };
 
 const getInformationAboutProject = async(): Promise<getInfoResult> =>{
-    const result = await AboutProjectModel.findOne({}, {_id:0});
+    const result = await AboutProjectModel.findOne({}, {_id: 0});
     if (!result) return {
         data: {
             author: {

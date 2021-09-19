@@ -14,13 +14,13 @@ router.get('/', checkTokenMiddleware('user'), async (_req, res, next) => {
     }
 });
 
-router.get('/grammar', checkTokenMiddleware('user'), async (req, res, next) => {
+router.get('/grammar', checkTokenMiddleware('user'), async (_req, res, next) => {
     try {
         const result = await getGrammarFile();
         res.send(result);
     } catch (err) {
-        next(err)
+        next(err);
     }
-})
+});
 
 export default router;
