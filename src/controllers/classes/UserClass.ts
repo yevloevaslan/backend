@@ -21,6 +21,7 @@ export default class UserClass {
         if (data.birthday) this.user.birthday = data.birthday;
         if (data.email) this.user.email = data.email;
         if (data.sex) this.user.sex = data.sex;
+        if (data.img) this.user.img = data.img;
         await this.user.save();
     }
 
@@ -48,6 +49,7 @@ export default class UserClass {
             firstIn: this.user.firstIn,
             sex: this.user.sex,
             updatedAt: this.user.updatedAt,
+            img: this.user.img,
         };
     }
 }

@@ -5,6 +5,7 @@ export interface userUpdateInterface {
     middleName?: string,
     email?: string,
     sex?: 'f' | 'm',
+    img?: string,
 }
 
 export interface taskDataInterface<T> {

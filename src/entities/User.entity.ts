@@ -12,4 +12,5 @@ export interface IUser {
     sex: 'm' | 'f',
     createdAt: string,
     updatedAt: string,
+    img: string,
 }

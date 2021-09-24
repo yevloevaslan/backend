@@ -69,6 +69,8 @@ paths:
               type: string
             email:
               type: string
+            img:
+              type: string
       responses:
         200:
           description: ok
