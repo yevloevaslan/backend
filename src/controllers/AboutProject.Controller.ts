@@ -26,8 +26,8 @@ const createOrUpdateInformationAboutProject = async(data:InputDataInformationAbo
     const result = await AboutProjectModel.findOne();
     if (result) {
         const updateData: InputDataInformationAboutProject = {};
-        if (data.project) updateData.project = data.project;
-        if (data.author) updateData.author = data.author;
+        if ('project' in data) updateData.project = data.project;
+        if ('author' in data) updateData.author = data.author;
         if ('banner' in data) updateData.banner = data.banner;
         await AboutProjectModel.updateOne({_id: result._id}, {$set: updateData});
     } else {

@@ -20,6 +20,7 @@ const updateScoreRating = async ():Promise<boolean> => {
 };
 
 (async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
             const limit = 100;
@@ -33,7 +34,11 @@ const updateScoreRating = async ():Promise<boolean> => {
                     const [fileExists1, fileExists2, fileExists3, fileExists4, fileExists5] = await Promise.all([
                         UserModel.findOne({img: file.path}, {_id: 1}).lean(),
                         TaskModel.findOne({$or: [{'params.photos': file.path}, {'params.sound': file.path}]}, {_id: 1}).lean(),
-                        AboutProjectModel.findOne({$or: [{'project.photos': { $in: [file.path] }}, {'author.photos': { $in: [file.path] }}]}, {_id: 1}).lean(),
+                        AboutProjectModel.findOne({$or: [
+                            {'project.photos': { $in: [file.path] }},
+                            {'author.photos': { $in: [file.path] }},
+                            {'banner': { $in: [file.path] }},
+                        ]}, {_id: 1}).lean(),
                         AboutProjectModel.findOne({ banner: file.path }),
                         GrammarModel.findOne({filename: file.path }),
                     ]);
