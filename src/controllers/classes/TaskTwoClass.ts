@@ -59,6 +59,7 @@ export default class TaskTwoClass implements TaskClassInterface {
             level: this.task.level,
             params: this.task.params as unknown as TaskTwo,
             active: this.task.active,
+            number: this.task.number,
         };
     }
 }

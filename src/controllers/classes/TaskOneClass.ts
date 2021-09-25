@@ -58,6 +58,7 @@ export default class TaskOneClass implements TaskClassInterface {
             level: this.task.level,
             params: this.task.params as unknown as TaskOne,
             active: this.task.active,
+            number: this.task.number,
         };
     }
 }
