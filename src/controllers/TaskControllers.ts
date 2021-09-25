@@ -211,9 +211,11 @@ const deleteTask = async (_id: string): Promise<voidResult> => {
 
 const updateTask = async (id: string, data: updateTaskData): Promise<creatTask> => {
     schemaErrorHandler(taskUpdateInputSchema.validate(data));
-    await validateTaskNumber(data, id);
 
     const task = await TaskFactory(null, id);
+    if (task.data().number !== data.number) {
+        await validateTaskNumber(data, id);
+    }
     await task.updateTask(data);
 
     return {

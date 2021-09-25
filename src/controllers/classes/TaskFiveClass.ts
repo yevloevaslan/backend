@@ -57,6 +57,7 @@ export default class TaskFiveClass implements TaskClassInterface {
             level: this.task.level,
             params: this.task.params as TaskFive,
             active: this.task.active,
+            number: this.task.number,
         };
     }
 }

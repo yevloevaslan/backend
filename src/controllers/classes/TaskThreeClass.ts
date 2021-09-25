@@ -71,6 +71,7 @@ export default class TaskThreeClass implements TaskClassInterface {
             level: this.task.level,
             params: this.task.params as TaskThree,
             active: this.task.active,
+            number: this.task.number,
         };
     }
 }
