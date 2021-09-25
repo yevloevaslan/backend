@@ -14,4 +14,5 @@ export interface taskDataInterface<T> {
     points: number,
     params: T,
     active: boolean,
+    number?: number
 }

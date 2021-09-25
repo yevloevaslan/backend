@@ -51,19 +51,25 @@ input paginationParams {
 }
 
 input TaskUpdateData {
+    title: String,
+    description: String,
     level: String,
     points: Int,
     params: params,
-    active: Boolean
+    active: Boolean,
+    number: Int,
 }
 
 
 input TaskCreateData {
+    title: String!,
+    description: String!,
     type: String!,
     level: String!,
     points: Int!,
     params: params!,
-    active: Boolean!
+    active: Boolean!,
+    number: Int,
 }
 
 input params {
@@ -136,7 +142,8 @@ type Task {
     level: String!,
     points: Int!,
     params: paramsType,
-    active: Boolean!
+    active: Boolean!,
+    number: Int,
 }
 
 type paramsType {
@@ -216,6 +223,7 @@ export const root = {
             type: taskData.type,
             params: taskData.params as TaskParams,
             active: taskData.active,
+            number: taskData.number,
         });
         return true;
     },
@@ -234,6 +242,7 @@ export const root = {
             level: taskData.level,
             params: taskData.params as TaskParams,
             active: taskData.active,
+            number: taskData.number,
         });
         return true;
     },
