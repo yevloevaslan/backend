@@ -60,6 +60,7 @@ export interface updateTaskData {
     points?: number,
     params?: TaskParams,
     active?: boolean,
+    number?: number
 }
 
 interface getRandomTask {
@@ -97,9 +98,25 @@ const randomTaskSchema = Joi.object({
     level: Joi.string().required(),
 });
 
+const validateTaskNumber = async (taskData: any, id?: string) =>{
+    if (taskData.number) {
+        let type;
+        if (taskData.type) {
+            type = taskData.type;
+        } else {
+            type = (await TaskModel.findById(id).lean()).type;
+        }
+        const notUniqueNumberInType = await TaskModel.findOne({number: taskData.number, type}).lean();
+        if (notUniqueNumberInType) {
+            throw conflict(`Task with number ${taskData.number} already exist in type ${type}`);
+        }
+    } 
+};
+
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     if (!['1', '2', '3'].includes(data.level)) throw conflict('This level do not exist');
     schemaErrorHandler(taskMainSchema.validate(data));
+    await validateTaskNumber(data);
     await TaskFactory(data);
     return {
         data: {
@@ -171,7 +188,7 @@ const getTasks = async (query: { type?: string, _id?: string }, options: { limit
     if (query.type) taskQuery.type = query.type;
     if (query._id) taskQuery._id = query._id;
     const [tasks, count] = await Promise.all([
-        TaskModel.find(taskQuery).skip(skip).limit(limit).lean(),
+        TaskModel.find(taskQuery).skip(skip).limit(limit).sort({number: 1}).lean(),
         TaskModel.countDocuments(taskQuery),
     ]);
 
@@ -194,6 +211,7 @@ const deleteTask = async (_id: string): Promise<voidResult> => {
 
 const updateTask = async (id: string, data: updateTaskData): Promise<creatTask> => {
     schemaErrorHandler(taskUpdateInputSchema.validate(data));
+    await validateTaskNumber(data, id);
 
     const task = await TaskFactory(null, id);
     await task.updateTask(data);

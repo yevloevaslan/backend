@@ -26,6 +26,9 @@ export const Task = new Schema({
     params: {
         type: Object,
     },
+    number: {
+        type: Number,
+    },
 }, {
     timestamps: true,
     strict: false,

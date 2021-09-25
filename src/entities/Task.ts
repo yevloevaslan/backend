@@ -5,6 +5,7 @@ export interface ITask<T> {
     points: number,
     params: T,
     active: boolean,
+    number?: number,
 }
 
 export interface TaskOne { //задание с изображением

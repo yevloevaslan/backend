@@ -152,6 +152,7 @@ export type Task = {
   points: Scalars['Int'];
   params?: Maybe<ParamsType>;
   active: Scalars['Boolean'];
+  number?: Maybe<Scalars['Int']>;
 };
 
 export type TaskCreateData = {
@@ -162,6 +163,7 @@ export type TaskCreateData = {
   points: Scalars['Int'];
   params: Params;
   active: Scalars['Boolean'];
+  number?: Maybe<Scalars['Int']>;
 };
 
 export type TaskListResult = {
@@ -182,6 +184,7 @@ export type TaskUpdateData = {
   points?: Maybe<Scalars['Int']>;
   params?: Maybe<Params>;
   active?: Maybe<Scalars['Boolean']>;
+  number?: Maybe<Scalars['Int']>;
 };
 
 export type TasksQuery = {
