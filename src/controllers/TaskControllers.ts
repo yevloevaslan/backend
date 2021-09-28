@@ -188,7 +188,7 @@ const getTasks = async (query: { type?: string, _id?: string }, options: { limit
     if (query.type) taskQuery.type = query.type;
     if (query._id) taskQuery._id = query._id;
     const [tasks, count] = await Promise.all([
-        TaskModel.find(taskQuery).skip(skip).limit(limit).sort({number: 1}).lean(),
+        TaskModel.find(taskQuery).skip(skip).limit(limit).sort({number: -1}).lean(),
         TaskModel.countDocuments(taskQuery),
     ]);
 
