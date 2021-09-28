@@ -114,8 +114,7 @@ const validateTaskNumber = async (taskData: any, id?: string) =>{
 };
 export const getNextTaskNumber = async (taskData: taskDataInterface<TaskParams>): Promise<number> =>{
     const maxNumberInType = await TaskModel.findOne({type: taskData.type}, {number: 1}).sort({number: -1});
-    const nextNumber = maxNumberInType? maxNumberInType.number+1 : 1;
-    console.log(nextNumber);
+    const nextNumber = maxNumberInType ? maxNumberInType.number + 1 : 1;
     return nextNumber;
 
 };
