@@ -112,11 +112,23 @@ const validateTaskNumber = async (taskData: any, id?: string) =>{
         }
     } 
 };
+const getNextTaskNumber = async (taskData: taskDataInterface<TaskParams>) =>{
+    const maxNumberInType = await TaskModel.findOne({type: taskData.type}, {number: 1}).sort({number: -1});
+    const nextNumber = maxNumberInType? maxNumberInType.number+1 : 1;
+    console.log(nextNumber);
+    return nextNumber;
+
+};
 
 const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTask> => {
     if (!['1', '2', '3'].includes(data.level)) throw conflict('This level do not exist');
     schemaErrorHandler(taskMainSchema.validate(data));
-    await validateTaskNumber(data);
+    if (data.number) {
+        await validateTaskNumber(data);
+    } else {
+        data.number = await getNextTaskNumber(data);
+    }
+
     await TaskFactory(data);
     return {
         data: {
