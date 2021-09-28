@@ -51,8 +51,6 @@ input paginationParams {
 }
 
 input TaskUpdateData {
-    title: String,
-    description: String,
     level: String,
     points: Int,
     params: params,
@@ -62,8 +60,6 @@ input TaskUpdateData {
 
 
 input TaskCreateData {
-    title: String!,
-    description: String!,
     type: String!,
     level: String!,
     points: Int!,

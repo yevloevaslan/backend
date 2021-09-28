@@ -156,8 +156,6 @@ export type Task = {
 };
 
 export type TaskCreateData = {
-  title: Scalars['String'];
-  description: Scalars['String'];
   type: Scalars['String'];
   level: Scalars['String'];
   points: Scalars['Int'];
@@ -178,8 +176,6 @@ export type TaskListResultMeta = {
 };
 
 export type TaskUpdateData = {
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
   level?: Maybe<Scalars['String']>;
   points?: Maybe<Scalars['Int']>;
   params?: Maybe<Params>;
