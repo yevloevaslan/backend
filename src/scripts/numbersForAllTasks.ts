@@ -1,6 +1,7 @@
 import { getNextTaskNumber } from '../controllers/TaskControllers';
 import { TaskModel } from '../db/models/Task';
-
+import db from '../db';
+db();
 (async () => {
     try {
         const tasks = await TaskModel.find();
