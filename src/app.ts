@@ -17,7 +17,7 @@ app.use(cors({
     optionsSuccessStatus: 200,
 }));
 
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
