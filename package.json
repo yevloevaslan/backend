@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "env PORT=7777 nodemon src/index.ts",
     "dev-admin-service": "nodemon src/adminService.ts",
     "test": "jest --config=jest.config.cjs --runInBand --detectOpenHandles --forceExit",
     "lint": "eslint .",
