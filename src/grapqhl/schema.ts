@@ -207,8 +207,8 @@ export const root = {
         await createOrUpdateInformationAboutProject({ author: args.aboutAuthor, project: args.aboutProject, banner: args.banner});
         return true;
     },
-    updateUser: async (args: { id: string, data: UpdateUserData }): Promise<boolean> => {
-        await updateUserData(undefined, args.data, args.id);
+    updateUser: async (args: { _id: string, data: UpdateUserData }): Promise<boolean> => {
+        await updateUserData(undefined, args.data, args._id);
         return true;
     },
     createTask: async (args: { taskData: TaskCreateData }): Promise<boolean> => {
