@@ -18,9 +18,9 @@ export default class UserClass {
         if (data.firstName) this.user.firstName = data.firstName;
         if (data.lastName) this.user.lastName = data.lastName;
         if (data.middleName) this.user.middleName = data.middleName;
-        if (data.birthday) this.user.birthday = data.birthday;
+        if ('birthday' in data) this.user.birthday = data.birthday || null;
         if (data.email) this.user.email = data.email;
-        if (data.sex) this.user.sex = data.sex;
+        if ('sex' in data) this.user.sex = data.sex || null;
         if (data.img) this.user.img = data.img;
         await this.user.save();
     }

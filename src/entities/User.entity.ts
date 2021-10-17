@@ -9,7 +9,7 @@ export interface IUser {
     lastName: string,
     middleName: string,
     email: string,
-    sex: 'm' | 'f',
+    sex: 'm' | 'f' | null,
     createdAt: string,
     updatedAt: string,
     img: string,

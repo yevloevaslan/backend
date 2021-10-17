@@ -57,9 +57,9 @@ const userUpdateInputSchema = Joi.object({
     firstName: Joi.string(),
     lastName: Joi.string(),
     middleName: Joi.string(),
-    birthday: Joi.string().pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
+    birthday: Joi.string().allow('', null).pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
     email: Joi.string().email(),
-    sex: Joi.string().valid('f', 'm'),
+    sex: Joi.string().allow('', null).valid('f', 'm'),
     img: Joi.string(),
 }).unknown();
 

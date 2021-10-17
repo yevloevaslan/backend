@@ -4,7 +4,7 @@ export interface userUpdateInterface {
     birthday?: string,
     middleName?: string,
     email?: string,
-    sex?: 'f' | 'm',
+    sex?: 'f' | 'm' | '' | null,
     img?: string,
 }
 
