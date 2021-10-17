@@ -52,6 +52,7 @@ const User = new Schema({
         enum: [
             'm',
             'f',
+            null,
         ],
     },
     img: {
