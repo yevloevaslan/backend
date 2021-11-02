@@ -62,7 +62,7 @@ adminApp.post('/api/admin/upload',
 adminApp.use('/api/admin', graphqlHTTP((request, response, _graphQLParams) => ({
     schema,
     rootValue: root,
-    graphiql: true,
+    graphiql: (NODE_ENV !== 'production'),
     customFormatErrorFn: (err) => {
         if (NODE_ENV !== 'production') console.error(err);
         const originalError = err.originalError as Boom;
