@@ -18,8 +18,8 @@ const updateScoreRating = async ():Promise<boolean> => {
         console.error(err);
     }
 };
-
-(async () => {
+ 
+const deleteUnusedFiles = async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
         try {
@@ -61,6 +61,8 @@ const updateScoreRating = async ():Promise<boolean> => {
             }, 3 * 60 * 1000);
         });
     }
-})();
+};
+
+// deleteUnusedFiles();
 
 schedule.scheduleJob('*/30 * * * * *', updateScoreRating);
