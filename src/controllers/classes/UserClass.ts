@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { UserModel } from '../../db/models';
 import { IUser } from '../../entities/User.entity';
 import { userUpdateInterface } from '../interfaces';
 
@@ -30,6 +31,24 @@ export default class UserClass {
         await this.user.save();
     }
 
+    async upUserTaskResult(level: string): Promise<void> {
+        const updateQuery = `tasksCount.byLevel.${level}`;
+        if (!this.user.tasksCount) {
+            this.user.tasksCount = {byLevel: {}};
+            await this.user.save();
+        }
+        if (!this.user.tasksCount.byLevel) {
+            this.user.tasksCount.byLevel = {};
+            await this.user.save();
+        }
+        if (!this.user.tasksCount.byLevel[level]) {
+            await UserModel.updateOne({_id: this.user._id}, {$set: {[updateQuery]: 1}});
+        }
+        else {
+            await UserModel.updateOne({_id: this.user._id}, {$inc: {[updateQuery]: 1}});
+        }
+    }
+
     get _id(): string {
         return this.user._id;
     }
@@ -50,6 +69,7 @@ export default class UserClass {
             sex: this.user.sex,
             updatedAt: this.user.updatedAt,
             img: this.user.img,
+            tasksCount: this.user.tasksCount,
         };
     }
 }

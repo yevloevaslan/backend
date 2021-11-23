@@ -7,8 +7,11 @@ import { ITask } from '../entities/Task';
 import { TaskModel } from '../db/models/Task';
 import { paginationParams } from '../libs/checkInputParameters';
 import UserClass from './classes/UserClass';
-import {CompletedTaskModel} from '../db/models';
+import {CompletedTaskModel, TasksCountModel} from '../db/models';
 import {conflict, notFound} from 'boom';
+import { getUserTasksCount, userTasksCount } from './UserController';
+import { ITasksCountEntity } from '../entities/TasksCount.entity';
+import { Document } from 'mongoose';
 
 export interface TaskResultData {
     _id: string,
@@ -21,6 +24,7 @@ export interface TaskResultData {
 
 export interface TaskResultMeta {
     count: number,
+    tasksCount: any
 }
 export interface getTasksResult {
     data: {
@@ -71,7 +75,13 @@ interface getRandomTask {
 interface randomTask {
     data: {
         task: TaskResultData
+        tasksCount: tasksCount
     }
+}
+
+interface tasksCount {
+    userTasksCount?: userTasksCount
+    totalTasksCount: ITasksCountEntity
 }
 
 const taskMainSchema = Joi.object({
@@ -127,8 +137,8 @@ const createTask = async (data: taskDataInterface<TaskParams>): Promise<creatTas
     } else {
         data.number = await getNextTaskNumber(data);
     }
-
     await TaskFactory(data);
+    await updateLevelCounter(data.level);
     return {
         data: {
             type: data.type,
@@ -144,10 +154,10 @@ const checkTaskAnswer = async (user: UserClass, _id: string, answer: string): Pr
 
     const task = await TaskFactory(null, _id);
     let trueResult = false;
-    console.log(task.data(), answer);
     if (task.checkTask(answer) === true) {
         await user.upUserScore(task.data().points);
         await new CompletedTaskModel({userId: user._id, taskId: _id, correct: true}).save();
+        await user.upUserTaskResult(task.data().level);
         trueResult = true;
     }
     return {
@@ -169,17 +179,36 @@ const giveRandomTaskToUser = async (data: getRandomTask): Promise<randomTask> =>
         tasks = completedTasks[0].task_ids;
     }
 
+
     const countTasks = await TaskModel.count({_id: {$nin: tasks}, level: data.level, active: true});
     const randomTask = await TaskModel.findOne({_id: {$nin: tasks}, level: data.level, active: true}).skip(Math.floor(countTasks * Math.random()));
     if (!randomTask) throw notFound('No tasks for user');
     delete randomTask.params.answer;
     delete randomTask.params.answerArray;
+
+    const tasksCount = await getTasksCount(data.userId);
+
+
     return {
         data: {
             task: randomTask,
+            tasksCount,
         },
     };
 };
+
+const getTasksCount = async (userId?: string): Promise<tasksCount> =>{
+
+    const totalTasksCount = (await getTotalTasksCount()).toObject();
+    delete totalTasksCount._id;
+    if (!userId) return {totalTasksCount};
+
+    const userTasksCount = await getUserTasksCount(userId);
+    return {
+        userTasksCount, totalTasksCount,
+    };
+};
+
 
 const getTask = async (_id: string): Promise<getTaskResult> => {
     const task = await TaskFactory(null, _id);
@@ -202,19 +231,22 @@ const getTasks = async (query: { type?: string, _id?: string }, options: { limit
         TaskModel.find(taskQuery).skip(skip).limit(limit).sort({number: -1}).lean(),
         TaskModel.countDocuments(taskQuery),
     ]);
-
+    const {totalTasksCount: tasksCount} = await getTasksCount();
     return {
         data: {
             tasks,
         },
         meta: {
             count,
+            tasksCount,
         },
     };
 };
 
 const deleteTask = async (_id: string): Promise<voidResult> => {
-    await TaskModel.deleteOne({ _id });
+    const deleted = await TaskModel.findOneAndDelete({ _id });
+
+    await updateLevelCounter(deleted ? deleted.level : null);
     return {
         data: null,
     };
@@ -228,10 +260,46 @@ const updateTask = async (id: string, data: updateTaskData): Promise<creatTask> 
         await validateTaskNumber(data, id);
     }
     await task.updateTask(data);
-
+    await updateLevelCounter(data.level);
     return {
         data: null,
     };
+};
+
+const getTotalTasksCount = async (): Promise<Document&ITasksCountEntity>=>{
+    const tasksCount = await TasksCountModel.findOne({}, { __v: 0});
+    return tasksCount;
+};
+
+export const updateLevelCounter = async (level?: string): Promise<void> => {
+    
+    try {
+        const levelsCount = { };
+        if (!level) {
+            const levels = await TaskModel.find().distinct('level');
+            for (const level of levels) {
+                levelsCount[level] = await TaskModel.count({level, active: true});
+            }
+        } else {
+            levelsCount[level] = await TaskModel.count({level, active: true});
+        }
+
+        const tasksCount = await getTotalTasksCount();
+        if (!tasksCount) {
+            await new TasksCountModel({byLevel: levelsCount}).save();
+        } else {
+            if (!level) {
+                tasksCount.byLevel = levelsCount;
+                await tasksCount.save();
+            } else {
+                const levelQuery = `byLevel.${level}`;
+                await TasksCountModel.updateOne({}, {$set: {[levelQuery]: levelsCount[level]}});
+            }
+        }
+        console.log(level, tasksCount);
+    } catch (e) {
+        console.log('update tasks count failed', e);
+    }
 };
 
 
@@ -244,3 +312,5 @@ export {
     updateTask,
     giveRandomTaskToUser,
 };
+
+
