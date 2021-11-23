@@ -3,6 +3,7 @@ import {UserModel, FileModel, TaskModel, AboutProjectModel, GrammarModel} from '
 import db from './db';
 import moment from 'moment';
 import {deleteObject} from './libs/upload';
+import {updateLevelCounter} from './controllers/TaskControllers';
 db();
 
 const updateScoreRating = async ():Promise<boolean> => {
@@ -65,4 +66,10 @@ const deleteUnusedFiles = async () => {
 
 // deleteUnusedFiles();
 
+const updateLevelCounterJob = async()=>{
+    await updateLevelCounter();
+};
+
 schedule.scheduleJob('*/30 * * * * *', updateScoreRating);
+
+schedule.scheduleJob('00 12 * * *', updateLevelCounterJob);

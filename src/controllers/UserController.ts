@@ -11,6 +11,7 @@ import { badGateway, badRequest } from 'boom';
 import { userUpdateInterface } from './interfaces';
 import needle from 'needle';
 import config from '../config';
+import { GroupByLevel } from '../entities/TasksCount.entity';
 
 interface confirmLoginResult {
     data: {
@@ -29,6 +30,10 @@ interface usersCountResult {
     data: {
         count: number,
     },
+}
+
+export interface userTasksCount {
+    byLevel: GroupByLevel
 }
 
 interface loginResult {
@@ -152,6 +157,11 @@ const sendSms = async(phone: string, code: string): Promise<boolean>=>{
     return false;
 };
 
+const getUserTasksCount = async(userId: string): Promise<userTasksCount>=>{
+    const result = await UserModel.findOne({_id: userId}, {tasksCount: 1, _id: 0});
+    return result ? result.tasksCount : null;
+};
+
 export {
     login,
     confirmLogin,
@@ -159,4 +169,5 @@ export {
     getUsers,
     usersCount,
     updateUserData,
+    getUserTasksCount,
 };

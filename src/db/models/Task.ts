@@ -14,6 +14,7 @@ export const Task = new Schema({
         ],
         type: String,
         required: true,
+        index: true,
     },
     points: {
         type: Number,

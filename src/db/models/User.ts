@@ -58,6 +58,9 @@ const User = new Schema({
     img: {
         type: String,
     },
+    tasksCount: {
+        byLevel: Object,
+    },
 }, {
     timestamps: true,
 });

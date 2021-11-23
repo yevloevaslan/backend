@@ -1,3 +1,4 @@
+import {GroupByLevel} from './TasksCount.entity';
 export interface IUser {
     _id: string,
     phone: string,
@@ -13,4 +14,7 @@ export interface IUser {
     createdAt: string,
     updatedAt: string,
     img: string,
+    tasksCount: {
+        byLevel: GroupByLevel
+    }
 }
