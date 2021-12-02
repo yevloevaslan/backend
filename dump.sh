@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# example 
-# sh dump.sh translate  
+# example
+# sh dump.sh translate
 db=$1
 today=$(date  +%m%d%Y)
 echo ${today}
-dumpdir=$(PWD)/../dump/
+dumpdir=${PWD}/../dump/
 daydumpdir=${dumpdir}"${today}"
-mkdir -p $(PWD)/../dump/
+mkdir -p ${PWD}/../dump/
 
 CONTAINER_NAME=$(docker ps -qf "name=mongo")
 
