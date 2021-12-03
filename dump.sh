@@ -2,12 +2,17 @@
 
 # example
 # sh dump.sh translate
+
+#CRON:
+# PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# 0 0 * * * /bin/sh /root/translator/dump.sh >> /root/dump/mongodump.log 2>&1
+
 db=$1
 today=$(date  +%m%d%Y)
 echo ${today}
-dumpdir=${PWD}/../dump/
+dumpdir=${PWD}/dump/
 daydumpdir=${dumpdir}"${today}"
-mkdir -p ${PWD}/../dump/
+mkdir -p ${PWD}/dump/
 
 CONTAINER_NAME=$(docker ps -qf "name=mongo")
 
