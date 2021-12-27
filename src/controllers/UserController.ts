@@ -9,9 +9,8 @@ import { UserModel } from '../db/models';
 import moment from 'moment';
 import { badGateway, badRequest } from 'boom';
 import { userUpdateInterface } from './interfaces';
-import needle from 'needle';
-import config from '../config';
 import { GroupByLevel } from '../entities/TasksCount.entity';
+import { sendConfirmCode } from './EmailController';
 
 interface confirmLoginResult {
     data: {
@@ -47,10 +46,10 @@ interface voidResult {
     data: null,
 }
 
-const fakePhones = ['+79991111111', '+79992222222', '+79993333333'];
+const fakeEmails = ['qwerty@test.com', 'aaaaa@test.com', 'qqqqqq@test.com'];
 
 const loginInputSchema = Joi.object({
-    phone: Joi.string().required().pattern(/^((\+7)+([0-9]){10})$/),
+    email: Joi.string().required().email(),
 });
 
 const confirmInputSchema = Joi.object({
@@ -63,20 +62,22 @@ const userUpdateInputSchema = Joi.object({
     lastName: Joi.string(),
     middleName: Joi.string(),
     birthday: Joi.string().allow('', null).pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
-    email: Joi.string().email(),
     sex: Joi.string().allow('', null).valid('f', 'm'),
     img: Joi.string(),
 }).unknown();
 
-const login = async (data: {phone?: string}): Promise<loginResult> => {
+const normalizeEmail = (email: string) => (email.toLowerCase().trim());
+
+const login = async (data: {email?: string}): Promise<loginResult> => {
     schemaErrorHandler(loginInputSchema.validate(data));
-    const confirmCode = await ConfirmCode({phone: String(data.phone)});
-    if (fakePhones.includes(data.phone)) {
+    data.email = normalizeEmail(data.email);
+    const confirmCode = await ConfirmCode({email: String(data.email)});
+    if (fakeEmails.includes(data.email)) {
         await confirmCode.generateCode(true);
     } else {
         await confirmCode.generateCode();
-        const succesSend = await sendSms(String(data.phone), confirmCode.data.code);
-        if (!succesSend) throw badGateway('Sms service error');
+        const successSend = await sendConfirmCode(data.email, confirmCode.data.code);
+        if (!successSend) throw badGateway('Email service error');
     }
 
     return {
@@ -91,7 +92,7 @@ const confirmLogin = async (data: {_id: string, code: string}): Promise<confirmL
     schemaErrorHandler(confirmInputSchema.validate(data));
     const confirmCode = await ConfirmCode({_id: data._id});
     await confirmCode.checkCode(data.code);
-    const user = await User({phone: confirmCode.getPhone});
+    const user = await User({email: confirmCode.getEmail});
     const token = await createToken({_id: user._id, type: 'user'});
     const userData = user.data;
     if (user.data.firstIn) await user.endFirstLogin();
@@ -146,16 +147,17 @@ const usersCount = async (): Promise<usersCountResult> => {
     };
 };
 
-const sendSms = async(phone: string, code: string): Promise<boolean>=>{
-    phone = parseInt(phone).toString();
-    const text = `Код подтверждения ${code}`;
-    const uri = `${config.smsServiceUri}?api_id=${config.smsApiID}&to=${phone}&msg=${text}&json=1`;
-    const result = await needle('get', encodeURI(uri));
-    if (100 <= parseInt(result?.body?.status_code) && parseInt(result?.body?.status_code)<= 103) {
-        return true;
-    }
-    return false;
-};
+// const sendSms = async(phone: string, code: string): Promise<boolean>=>{
+//     phone = parseInt(phone).toString();
+//     const text = `Код подтверждения ${code}`;
+//     const uri = `${config.smsServiceUri}?api_id=${config.smsApiID}&to=${phone}&msg=${text}&json=1`;
+//     const result = await needle('get', encodeURI(uri));
+//     if (100 <= parseInt(result?.body?.status_code) && parseInt(result?.body?.status_code)<= 103) {
+//         return true;
+//     }
+//     return false;
+// };
+
 
 const getUserTasksCount = async(userId: string): Promise<userTasksCount>=>{
     const result = await UserModel.findOne({_id: userId}, {tasksCount: 1, _id: 0});

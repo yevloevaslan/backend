@@ -18,8 +18,6 @@ import {IUser} from '../../entities/User.entity';
 const User = new Schema({
     phone: {
         type: String,
-        required: true,
-        unique: true,
     },
     firstIn: {
         type: Boolean,
@@ -46,6 +44,8 @@ const User = new Schema({
     },
     email: {
         type: String,
+        required: true,
+        unique: true,
     },
     sex: {
         type: String,
