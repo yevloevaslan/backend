@@ -3,7 +3,6 @@ export interface userUpdateInterface {
     lastName?: string,
     birthday?: string,
     middleName?: string,
-    email?: string,
     sex?: 'f' | 'm' | '' | null,
     img?: string,
 }

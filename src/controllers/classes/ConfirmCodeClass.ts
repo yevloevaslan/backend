@@ -35,8 +35,8 @@ export default class ConfirmCodeClass {
         await this.confirmCode.save();
     }
 
-    get getPhone(): string {
-        return this.confirmCode.phone;
+    get getEmail(): string {
+        return this.confirmCode.email;
     }
 
     get data(): IConfirmCode {

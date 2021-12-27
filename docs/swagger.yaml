@@ -20,8 +20,9 @@ paths:
         schema:
           type: object
           properties:
-            phone:
+            email:
               type: string
+              format: email
       responses:
         200:
           description: ok

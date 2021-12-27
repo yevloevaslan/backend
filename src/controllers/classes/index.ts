@@ -14,13 +14,13 @@ import TaskFourClass from './TaskFourClass';
 import TaskFiveClass from './TaskFiveClass';
 import { Document } from 'mongoose';
 
-export const User = async (data: { phone?: string, _id?: string }): Promise<UserClass> => {
-    const query = data._id ? { _id: data._id } : { phone: data.phone };
+export const User = async (data: { email?: string, _id?: string, }): Promise<UserClass> => {
+    const query = data._id ? { _id: data._id } : { email: data.email };
     let userData = await UserModel.findOne(query);
     if (!userData) {
-        if (query.phone) {
+        if (query.email) {
             userData = await new UserModel({
-                phone: data.phone,
+                email: data.email,
                 score: 0,
                 firstIn: true,
             }).save();
@@ -31,13 +31,13 @@ export const User = async (data: { phone?: string, _id?: string }): Promise<User
     return user;
 };
 
-export const ConfirmCode = async (data: { phone?: string, _id?: string }): Promise<ConfirmCodeClass> => {
-    const query = data._id ? { _id: data._id } : { phone: data.phone };
+export const ConfirmCode = async (data: { email?: string, _id?: string }): Promise<ConfirmCodeClass> => {
+    const query = data._id ? { _id: data._id } : { email: data.email };
     let confirmCodeData = await ConfirmCodeModel.findOne(query);
     if (!confirmCodeData) {
-        if (data.phone) {
+        if (data.email) {
             confirmCodeData = await new ConfirmCodeModel({
-                phone: data.phone,
+                email: data.email,
             }).save();
         }
     }

@@ -11,10 +11,10 @@ describe('User routes tests', () => {
     });
 
     it('success login', async () => {
-        const phone = '+71234567890';
+        const email = 'email@mail.ru';
         await request(app)
             .post('/api/users/login')
-            .send({phone})
+            .send({email})
             .expect(200)
             .then((res) => {
                 expect(res.body).toEqual({
@@ -26,9 +26,9 @@ describe('User routes tests', () => {
             });
     });
     it('success confirm', async () => {
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const email = 'email@mail.ru';
+        const loginData = await login({email});
+        const confirmCodeModel = await ConfirmCodeModel.find({email});
         const code = confirmCodeModel[0].code;
         await request(app)
             .post('/api/users/confirm')
@@ -44,19 +44,20 @@ describe('User routes tests', () => {
                         user: {
                             _id: expect.any(String),
                             createdAt: expect.any(String),
-                            phone: expect.any(String),
+                            email: expect.any(String),
                             firstIn: true,
                             score: 0,
                             updatedAt: expect.any(String),
+                            tasksCount: {},
                         },
                     },
                 });
             });
     });
     it('firstIn:false', async() => {
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const email = 'email@mail.ru';
+        const loginData = await login({email});
+        const confirmCodeModel = await ConfirmCodeModel.find({email});
         const code = confirmCodeModel[0].code;
         await request(app)
             .post('/api/users/confirm')
@@ -72,19 +73,20 @@ describe('User routes tests', () => {
                         user: {
                             _id: expect.any(String),
                             createdAt: expect.any(String),
-                            phone: expect.any(String),
+                            email: expect.any(String),
                             firstIn: false,
                             score: 0,
                             updatedAt: expect.any(String),
+                            tasksCount: {},
                         },
                     },
                 });
             });
     });
     it('success get user info', async () => {
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const email = 'email@mail.ru';
+        const loginData = await login({email});
+        const confirmCodeModel = await ConfirmCodeModel.find({email});
         const code = confirmCodeModel[0].code;
         const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
         await UserModel.updateOne({$set: {rating: 1}});
@@ -97,19 +99,20 @@ describe('User routes tests', () => {
                     data: {
                         _id: expect.any(String),
                         createdAt: expect.any(String),
-                        phone: expect.any(String),
+                        email: expect.any(String),
                         firstIn: false,
                         score: 0,
                         rating: 1,
                         updatedAt: expect.any(String),
+                        tasksCount: {},
                     },
                 });
             });
     });
     it('success put user info', async () => {
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const email = 'email@mail.ru';
+        const loginData = await login({email});
+        const confirmCodeModel = await ConfirmCodeModel.find({email});
         const code = confirmCodeModel[0].code;
         const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
         await request(app)

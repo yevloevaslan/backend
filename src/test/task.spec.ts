@@ -112,9 +112,9 @@ describe('Tasks', () => {
                 active: true,
             });
         }
-        const phone = '+71234567890';
-        const loginData = await login({phone});
-        const confirmCodeModel = await ConfirmCodeModel.find({phone});
+        const email = 'email@mail.ru';
+        const loginData = await login({email});
+        const confirmCodeModel = await ConfirmCodeModel.find({email});
         const code = confirmCodeModel[0].code;
         const confirmLoginData = await confirmLogin({_id: `${loginData.data._id}`, code});
         const taskIds = new Set();
