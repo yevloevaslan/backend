@@ -39,11 +39,13 @@ const sendConfirmCode = async (email: string, confirmCode: string, language = DE
 };
 
 const smtpSender = async (email: string, subject: string, text: string) => {
-    await transporter.sendMail({
+    const result = await transporter.sendMail({
+        sender: 'Samott <postmaster@samott.use-case.ru>',
         text,
         subject,
         to: email,
     });
+    console.log(result);
 };
 
 
