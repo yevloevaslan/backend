@@ -1,4 +1,4 @@
-const {MONGO_DB_NAME, MONGO_DB_PORT, MONGO_DB_URI, PORT, JWT_KEY, ADMIN_PORT, JWT_KEY_GRAPHQL, AWS_ENDPOINT, AWS_BUCKET_NAME, SMS_SERVICE_URI, SMS_API_ID, EMAIL_URL} = process.env;
+const {MONGO_DB_NAME, MONGO_DB_PORT, MONGO_DB_URI, PORT, JWT_KEY, ADMIN_PORT, JWT_KEY_GRAPHQL, AWS_ENDPOINT, AWS_BUCKET_NAME, SMS_SERVICE_URI, SMS_API_ID, EMAIL_URL, SMTP_USER, SMTP_PASS} = process.env;
 export default {
     mongoDB: {
         uri: MONGO_DB_URI || 'localhost',
@@ -15,5 +15,10 @@ export default {
     smsApiID: SMS_API_ID,
     email: {
         url: EMAIL_URL,
+    },
+    smtp: {
+        host: 'smtp.eu.mailgun.org',
+        user: SMTP_USER,
+        pass: SMTP_PASS,
     },
 };

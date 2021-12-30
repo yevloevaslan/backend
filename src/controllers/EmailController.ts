@@ -4,6 +4,17 @@ import config from '../config';
 import { Environment } from '../constants/environment';
 import { DEFAULT_LANGUAGE, emailLocalization, templatedVariables } from '../constants/localization';
 const {NODE_ENV} = process.env;
+import nodemailer from 'nodemailer';
+
+const transporter = nodemailer.createTransport({
+    host: config.smtp.host,
+    port: 587,
+    requireTLS: true,
+    auth: {
+        user: config.smtp.user,
+        pass: config.smtp.pass,
+    },
+});
 
 
 const sendEmail = async (email: string, subject: string, text: string)=> {
@@ -19,12 +30,20 @@ const sendConfirmCode = async (email: string, confirmCode: string, language = DE
         return true;
     }
     try {
-        await sendEmail(email, emailLocalization[language].confirmEmail.subject, emailText);
+        await smtpSender(email, emailLocalization[language].confirmEmail.subject, emailText);
         return true;
     } catch (e) {
         console.log(e.message);
         return false;
     }
+};
+
+const smtpSender = async (email: string, subject: string, text: string) => {
+    await transporter.sendEmail({
+        text,
+        subject,
+        to: email,
+    });
 };
 
 
