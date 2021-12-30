@@ -39,7 +39,7 @@ const sendConfirmCode = async (email: string, confirmCode: string, language = DE
 };
 
 const smtpSender = async (email: string, subject: string, text: string) => {
-    await transporter.sendEmail({
+    await transporter.sendMail({
         text,
         subject,
         to: email,
