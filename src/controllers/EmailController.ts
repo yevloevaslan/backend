@@ -5,17 +5,36 @@ import { Environment } from '../constants/environment';
 import { DEFAULT_LANGUAGE, emailLocalization, templatedVariables } from '../constants/localization';
 const {NODE_ENV} = process.env;
 import nodemailer from 'nodemailer';
+import randomIntFromInterval from '../libs/randomIntFromInterval';
 
-const transporter = nodemailer.createTransport({
-    host: config.smtp.host,
+const transporter1 = nodemailer.createTransport({
+    host: config.smtp1.host,
     port: 587,
     requireTLS: true,
     auth: {
-        user: config.smtp.user,
-        pass: config.smtp.pass,
+        user: config.smtp1.user,
+        pass: config.smtp1.pass,
     },
 });
-
+const transporter2 = nodemailer.createTransport({
+    host: config.smtp2.host,
+    port: 587,
+    requireTLS: true,
+    auth: {
+        user: config.smtp2.user,
+        pass: config.smtp2.pass,
+    },
+});
+// const transporter3 = nodemailer.createTransport({
+//     host: config.smtp3.host,
+//     port: 587,
+//     requireTLS: true,
+//     auth: {
+//         user: config.smtp3.user,
+//         pass: config.smtp3.pass,
+//     },
+// });
+const transporters = [transporter1, transporter2];
 
 const sendEmail = async (email: string, subject: string, text: string)=> {
     const result = await needle('post', config.email.url, 
@@ -39,15 +58,19 @@ const sendConfirmCode = async (email: string, confirmCode: string, language = DE
 };
 
 const smtpSender = async (email: string, subject: string, text: string) => {
-    const result = await transporter.sendMail({
-        sender: 'Samott <postmaster@samott.use-case.ru>',
+    const randomInt = randomIntFromInterval(0, transporters.length-1);
+    const mailObj = {
+        sender: config[`smtp${randomInt+1}`].sender,
         text,
         subject,
         to: email,
-    });
-    console.log(result);
-};
+    };
+    const transporter = transporters[ randomInt ];
+    console.log(randomInt, mailObj);
 
+    const result = await transporter.sendMail(mailObj);
+    console.log(`sent with transporter${randomInt+1}`, result);
+};
 
 export {
     sendConfirmCode,
