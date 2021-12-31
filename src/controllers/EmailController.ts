@@ -25,16 +25,16 @@ const transporter2 = nodemailer.createTransport({
         pass: config.smtp2.pass,
     },
 });
-// const transporter3 = nodemailer.createTransport({
-//     host: config.smtp3.host,
-//     port: 587,
-//     requireTLS: true,
-//     auth: {
-//         user: config.smtp3.user,
-//         pass: config.smtp3.pass,
-//     },
-// });
-const transporters = [transporter1, transporter2];
+const transporter3 = nodemailer.createTransport({
+    host: config.smtp3.host,
+    port: 587,
+    requireTLS: true,
+    auth: {
+        user: config.smtp3.user,
+        pass: config.smtp3.pass,
+    },
+});
+const transporters = [transporter1, transporter2, transporter3];
 
 const sendEmail = async (email: string, subject: string, text: string)=> {
     const result = await needle('post', config.email.url, 
