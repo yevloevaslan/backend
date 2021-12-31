@@ -69,6 +69,9 @@ const userUpdateInputSchema = Joi.object({
 const normalizeEmail = (email: string) => (email.toLowerCase().trim());
 
 const login = async (data: {email?: string}): Promise<loginResult> => {
+    if (data.email && typeof data.email === 'string') {
+        data.email = data.email.trim().toLowerCase();
+    }
     schemaErrorHandler(loginInputSchema.validate(data));
     data.email = normalizeEmail(data.email);
     const confirmCode = await ConfirmCode({email: String(data.email)});
