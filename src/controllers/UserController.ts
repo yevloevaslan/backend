@@ -58,9 +58,9 @@ const confirmInputSchema = Joi.object({
 });
 
 const userUpdateInputSchema = Joi.object({
-    firstName: Joi.string(),
-    lastName: Joi.string(),
-    middleName: Joi.string(),
+    firstName: Joi.string().allow('', null),
+    lastName: Joi.string().allow('', null),
+    middleName: Joi.string().allow('', null),
     birthday: Joi.string().allow('', null).pattern(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/),
     sex: Joi.string().allow('', null).valid('f', 'm'),
     img: Joi.string(),
