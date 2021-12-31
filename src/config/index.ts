@@ -29,6 +29,7 @@ export default {
         pass: SMTP2_PASS,
     },
     smtp3: {
+        sender: 'Samott <postmaster@sa.mott.use-case.ru>',
         host: SMTP3_HOST ||'smtp.eu.mailgun.org',
         user: SMTP3_USER,
         pass: SMTP3_PASS,
