@@ -31,6 +31,7 @@ if (NODE_ENV !== 'production') {
 app.get('/api/ready', (_req, res) => res.send());
 app.use('/api', routes);
 app.use('/info', express.static('./static'));
+app.use('/app-ads.txt', express.static('./static/app-ads.txt'));
 
 app.use((_req: Request, _res: Response, next: NextFunction) => {
     return next(notFound('Not found'));
