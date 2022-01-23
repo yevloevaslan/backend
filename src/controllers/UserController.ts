@@ -5,7 +5,7 @@ import Joi from 'joi';
 import { schemaErrorHandler } from '../libs/joiSchemaValidation';
 import UserClass from './classes/UserClass';
 import { paginationParams } from '../libs/checkInputParameters';
-import { UserModel } from '../db/models';
+import { UserModel, CompletedTaskModel } from '../db/models';
 import moment from 'moment';
 import { badGateway, badRequest } from 'boom';
 import { userUpdateInterface } from './interfaces';
@@ -167,6 +167,15 @@ const getUserTasksCount = async(userId: string): Promise<userTasksCount>=>{
     return result ? result.tasksCount : null;
 };
 
+const deleteUser = async (userId: string): Promise<voidResult> => {
+    if (!userId) throw badRequest('UserId is required');
+    await CompletedTaskModel.deleteMany({userId});
+    await UserModel.deleteOne({_id: userId});
+    return {
+        data: null,
+    };
+};
+
 export {
     login,
     confirmLogin,
@@ -175,4 +184,5 @@ export {
     usersCount,
     updateUserData,
     getUserTasksCount,
+    deleteUser,
 };

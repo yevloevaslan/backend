@@ -1,6 +1,6 @@
 import {Router} from 'express';
 const router = Router();
-import {login, confirmLogin, updateUserData} from '../controllers/UserController';
+import {login, confirmLogin, updateUserData, deleteUser} from '../controllers/UserController';
 import { UserRequestInterface } from './interfaces/UserRequest.interface';
 import {checkTokenMiddleware} from './middlewares/auth.middleware';
 
@@ -36,6 +36,15 @@ router.get('/info', checkTokenMiddleware('user'), (req: UserRequestInterface, re
     res.send({
         data: req.user.data,
     });
+});
+
+router.delete('/deleting', checkTokenMiddleware('user'), async (req: UserRequestInterface, res, next) => {
+    try {
+        const result = await deleteUser(req.user._id);
+        res.send(result);
+    } catch (err) {
+        next(err);
+    }
 });
 
 export default router;
