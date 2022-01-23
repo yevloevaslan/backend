@@ -7,15 +7,6 @@ const {NODE_ENV} = process.env;
 import nodemailer from 'nodemailer';
 import randomIntFromInterval from '../libs/randomIntFromInterval';
 
-const transporter1 = nodemailer.createTransport({
-    host: config.smtp1.host,
-    port: 587,
-    requireTLS: true,
-    auth: {
-        user: config.smtp1.user,
-        pass: config.smtp1.pass,
-    },
-});
 const transporter2 = nodemailer.createTransport({
     host: config.smtp2.host,
     port: 587,
@@ -34,7 +25,7 @@ const transporter3 = nodemailer.createTransport({
         pass: config.smtp3.pass,
     },
 });
-const transporters = [transporter1, transporter2, transporter3];
+const transporters = [transporter2, transporter3];
 
 const sendEmail = async (email: string, subject: string, text: string)=> {
     const result = await needle('post', config.email.url, 
