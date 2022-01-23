@@ -21,10 +21,6 @@ export default class ConfirmCodeClass {
     }
 
     async checkCode(inputCode: string): Promise<void> {
-        if (inputCode === '000000') {
-            await this.updateCode();
-            return;
-        }
         if (!this.confirmCode || inputCode !== this.confirmCode.code) throw unauthorized('Auth error');
         await this.updateCode();
         return;
