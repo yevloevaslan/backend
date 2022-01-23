@@ -44,6 +44,14 @@ paths:
       responses:
         200:
           description: if param firstIn true, then redirect user on update info about him
+  /users/deleting:
+    delete:
+      tags:
+      - User
+      summary: Delete account
+      responses:
+        200:
+          description: ok
   /users/info:
     get:
       tags:
