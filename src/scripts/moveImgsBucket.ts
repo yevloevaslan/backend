@@ -7,7 +7,7 @@ const toBucket = 'samott';
     try {
         await db();
         for await (const doc of UserModel.find().cursor()) {
-            doc.img = doc.img.replace(fromBucket, toBucket);
+            if (doc.img) doc.img = doc.img.replace(fromBucket, toBucket);
             console.log(doc.img);
         }  
         for await (const doc of TaskModel.find().cursor()) {
