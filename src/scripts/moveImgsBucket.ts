@@ -17,10 +17,12 @@ const toBucket = 'samott';
                 for (const i in doc.params['photos']) {
                     doc.params['photos'][i] = doc.params['photos'][i].replace(fromBucket, toBucket);
                 }
+                doc.markModified('params');
                 await doc.save();
             }
             if (doc.params['sound']) {
                 doc.params['sound'] = doc.params['sound'].replace(fromBucket, toBucket);
+                doc.markModified('params');
                 await doc.save();
             }
         }
